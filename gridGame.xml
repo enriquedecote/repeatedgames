@@ -1,0 +1,23 @@
+
+<Test>
+<Environment>
+<Type><Grid name="gridEnv" columns="3" rows="3"><Pods><Coordinate>9,9</Coordinate></Pods></Grid></Type>
+
+
+
+<Players><Player>
+	<q-learning epsilon="0.1" epsilonDecay=".999913" alpha="0.9" alphaDecay=".999913" gamma="0.9" exploration="e-greedy" name="q-learning"></q-learning></Player>
+  <Player>
+	<q-learning epsilon="0.1" epsilonDecay=".999913" alpha="0.9"
+		alphaDecay=".999913" gamma="0.9" exploration="e-greedy" name="q-learning">
+	</q-learning></Player>
+</Players>
+<Coins>
+<Coordinate>2,1</Coordinate>
+<Coordinate>2,1</Coordinate>
+<Value>10</Value>
+</Coins>
+</Environment>
+<Experiment resultFileName="test" iterations="10">
+</Experiment>
+</Test>

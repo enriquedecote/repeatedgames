@@ -1,0 +1,173 @@
+package agent;
+
+import java.lang.reflect.Method;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+import java.util.Vector;
+
+import org.w3c.dom.Element;
+
+import experiment.ExperimentLogger;
+import experiment.Logger;
+
+
+import agent.Agent.Policy;
+
+import reward.Reward;
+
+import util.Action;
+import util.JointActionState;
+import util.JointActionStateDomain;
+import util.JointActionStateMapper;
+import util.NFGInfo;
+import util.ObservableEnvInfo;
+import util.State;
+import util.StateDomain;
+
+// This is a subclass of agent which can be instantiated. It Creates a learning agent which has its own strategies and learnd from its mistakes
+public class QLearningAgent extends Agent {
+	
+	//this is the algorithm's current high level strategy
+	//private Map<State,Action> strategy;
+	//private static StateDomain sDomain;
+	private State state;
+	private Random r;
+	
+	//learning parameters
+	private float epsilon;
+	private double alpha;
+
+	private static double alpha_decay = 0.5000001;
+	private String alphaDecay;
+	private Map<State,Map<Action,Integer>> alpha_t;
+	private float gamma;
+	
+	//given a state, returns a set of pairs <action,value>
+	Map<State,Map<Object,Double>> Q = new HashMap<State,Map<Object,Double>>();
+	Double Qinit;
+	
+	
+	public void init(Element e, int id){
+		super.init(e, id);
+		alpha = Double.valueOf(e.getAttribute("alpha"));
+		System.out.println("\t alpha: " + alpha);
+		alphaDecay = e.getAttribute("alphaDecay");
+		System.out.println("\t alpha decay: " + alphaDecay);
+		gamma = Float.valueOf(e.getAttribute("gamma"));
+		System.out.println("\t gamma: " + gamma);
+		Qinit = Double.valueOf(e.getAttribute("Qinit"));
+		System.out.println("\t Q table init: " + Qinit);
+	}
+	// constructor
+	public QLearningAgent(Reward r) {
+		reward = r;
+		
+	}
+	// constructor
+	public QLearningAgent(){		
+	}
+
+	@Override
+	// gets current action of agent
+	public Action getAction() {
+	
+		return currentAction;
+	}
+	
+	@Override
+	public void update(ObservableEnvInfo prev, ObservableEnvInfo curr) {
+		
+			currentState = (State) stateMapper.getState(curr);
+			State prevState = (State) stateMapper.getState(prev);
+			//reward.getReward(prev, currentFeat, agentId);
+			
+			Double val=Double.NEGATIVE_INFINITY;
+			Double maxQ = null;
+			Object action = null;
+			for(Object o : Q.get(currentState).keySet()){
+				if(Q.get(currentState).get(o) >= val){
+					action = o;
+					maxQ = Q.get(currentState).get(o);
+					val = maxQ;
+				}
+			}
+			Vector<Action> currJointAct =  stateMapper.getActions(curr);
+			Vector<Object> currO = new Vector<Object>();
+			for (Action act : currJointAct) 
+				currO.add(act.getCurrentState());
+	
+			int currReward = reward.getReward(curr, currO, agentId);
+			Map<Object, Double> mapQ = Q.get(prevState);
+			Action actQ = currJointAct.get(agentId);
+			Double Qval = Q.get(prevState).get(currJointAct.get(agentId).getCurrentState());
+			Double newQ =
+			(1-alpha)*Qval +
+			alpha*(reward.getReward(curr, currO, agentId) + gamma*maxQ);
+
+			//update Q value
+			Q.get(prevState).put(currJointAct.get(agentId).getCurrentState(), newQ);
+			
+			//choose a new action
+			currentAction.changeToState(policy.getNextAction(action)); 
+			
+			if(alphaDecay.equalsIgnoreCase("POLY"))
+				alpha = 1/(Math.pow((double)round, alpha_decay));
+			round++;
+
+		
+		//log.flush();
+	}
+	
+	/**
+	 * Constructs state space and strategy
+	 * @param e
+	 */
+	public void constructStructures(ObservableEnvInfo state){
+		String s = state.getClass().toString();
+		if(s.equals("class util.NFGInfo")){
+			NFGInfo nfg = (NFGInfo) state;
+
+			stateMapper.init(nfg);
+
+			/*			Vector<Action> vectA = nfg.currentJointAction();
+			Action a0 = vectA.get(0).newInstance();
+			Action a1 = vectA.get(1).newInstance();
+			vectA.clear();
+			vectA.add(a0); vectA.add(a1);
+			 */
+			stateDomain = stateMapper.getStateDomain();
+		}//end if
+
+		
+		//construct Q table and strategy
+		strategy = new HashMap<State, Object>();
+		for (Object ob : stateDomain.getStateSet()) {
+			State st = (State) ob;
+			strategy.put(st, currentAction.getCurrentState());
+			//init Q table
+			Map<Object,Double> m = new HashMap<Object, Double>();
+			for(Object o : currentAction.getDomainSet()){
+				m.put(o, Qinit);
+			}
+			Q.put(st, m);
+		}
+	}
+	
+	public void recordToLogger(ExperimentLogger log){
+		log.recordConfig("\n+++ AGENT: " + this.getClass());
+		log.recordConfig("States: " + stateMapper.getClass());
+		log.recordConfig("Action type: " + currentAction.getClass());
+		log.recordConfig("Policy: " + policy.getClass());
+		log.recordConfig("\t alpha: " + alpha);
+		log.recordConfig("\t alpha decay: " + alphaDecay);
+		log.recordConfig("\t gamma: " + gamma);
+		log.recordConfig("\t Q table init: " + Qinit);
+		log.recordConfig("Q-table:\n" + Q.toString());
+	}
+	
+	
+}

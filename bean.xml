@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+<beans>
+<bean id="q-learning" class="agent.QLearningAgent" singleton = "false">
+</bean>
+<bean id ="coordState" class = "util.CoordinateState">
+</bean>
+<bean id ="gridreward" class = "util.GridReward">
+</bean>
+	<bean id="gridEnv" class="environment.GridEnvironment"></bean>
+	<bean id="rNFG" class="reward.NFGReward"></bean>
+	<bean id="rnfgEnv" class="environment.NFGEnvironment" singleton = "false"></bean>
+</beans> 

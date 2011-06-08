@@ -1,0 +1,21 @@
+
+<Test>
+<Environment>
+<Type>
+	<rNFG type="rNFG" game="PD" name="rnfgEnv"></rNFG></Type>
+
+
+
+<Players><Player>
+	<q-learning epsilon="0.1" epsilonDecay="POLY" alpha="0.1" 
+		alphaDecay="_" gamma="0.95" policy="EGREEDY" name="q-learning" actionType="NINTACTIONS" numActions="2" stateType="_" Qinit="0">
+	</q-learning></Player>
+  <Player>
+	<q-learning epsilon="0.1" epsilonDecay="POLY" alpha="0.1"
+		alphaDecay="_" gamma="0.95" policy="EGREEDY" name="q-learning" actionType="NINTACTIONS" numActions="2" stateType="_" Qinit="0">
+	</q-learning></Player>
+</Players>
+</Environment>
+<Experiment iterations="10000" runs="2">
+</Experiment>
+</Test>
