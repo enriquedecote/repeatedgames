@@ -131,14 +131,14 @@ public class Experiment {
 		}
 
 		// 2) get environmental change (foe state perceptions for agents)
-		prevState = currentState;
+		// prevState = currentState;
 		currentState = env.nextEnvInfo(jointAction);
 		int[] instReward = rewards.getRewards(currentState,jointAction);
 		log.recordActions(jointActionString);
 		
 		// 3) update agents
 		for(Agent agent: agents)
-			agent.update(prevState, currentState);
+			agent.update(currentState);
 		
 		return instReward;
 	}

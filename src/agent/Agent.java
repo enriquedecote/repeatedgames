@@ -53,6 +53,11 @@ public abstract class Agent {
 		currentEnvInfo = currState;
 	}
 	
+	// updates the fields of the agent
+	public void update (ObservableEnvInfo currState){
+		currentEnvInfo = currState;
+	}
+	
 	public void init(Reward r){
 		reward = r;
 	}
