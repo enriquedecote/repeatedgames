@@ -90,6 +90,7 @@ public class QLearningAgent extends Agent {
 			Double val=Double.NEGATIVE_INFINITY;
 			Double maxQ = null;
 			Object action = null;
+			//get action=arg max_{a} and maxQ=max_{a}
 			for(Object o : Q.get(currentState).keySet()){
 				if(Q.get(currentState).get(o) >= val){
 					action = o;
@@ -106,6 +107,7 @@ public class QLearningAgent extends Agent {
 			Map<Object, Double> mapQ = Q.get(prevState);
 			Action actQ = currJointAct.get(agentId);
 			Double Qval = Q.get(prevState).get(currJointAct.get(agentId).getCurrentState());
+			//System.out.println("R("+currO+")="+reward.getReward(curr, currO, agentId));
 			Double newQ =
 			(1-alpha)*Qval +
 			alpha*(reward.getReward(curr, currO, agentId) + gamma*maxQ);

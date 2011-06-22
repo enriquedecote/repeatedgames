@@ -135,7 +135,7 @@ public class Experiment {
 		currentState = env.nextEnvInfo(jointAction);
 		int[] instReward = rewards.getRewards(currentState,jointAction);
 		log.recordActions(jointActionString);
-		
+		//System.out.println(jointActionString);
 		// 3) update agents
 		for(Agent agent: agents)
 			agent.update(currentState);
