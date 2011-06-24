@@ -16,6 +16,6 @@
 	</q-learning></Player>
 </Players>
 </Environment>
-<Experiment iterations="80000" runs="100">
+<Experiment iterations="60000" runs="100">
 </Experiment>
 </Test>
