@@ -210,7 +210,7 @@ public class ExperimentLogger {
 			//content.append("\t" + stateCount[i] + ret);
 		}
 		content.append(ret);
-		config.append(ret);
+		//config.append(ret);
 	}
 
 	public void recordActions(Vector<Object> act){

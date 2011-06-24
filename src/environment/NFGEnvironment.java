@@ -37,4 +37,9 @@ public class NFGEnvironment implements Environment<Action> {
 		return envInfo;
 	}
 
+	@Override
+	public void Init(Vector<Action> actions) {
+		envInfo.Init(actions);
+	}
+
 }

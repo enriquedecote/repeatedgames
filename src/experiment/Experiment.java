@@ -87,6 +87,7 @@ public class Experiment {
 			}
 			//get state info to construct agent's structures
 			env = xml.constructEnvironment();
+			env.Init(jointAction);
 			currentState = env.nextEnvInfo(jointAction);
 			for (Agent agent : agents)
 				agent.constructStructures(currentState);
@@ -131,11 +132,10 @@ public class Experiment {
 		}
 
 		// 2) get environmental change (foe state perceptions for agents)
-		// prevState = currentState;
 		currentState = env.nextEnvInfo(jointAction);
 		int[] instReward = rewards.getRewards(currentState,jointAction);
 		log.recordActions(jointActionString);
-		//System.out.println(jointActionString);
+		//System.out.println("State:"+jointActionString);
 		// 3) update agents
 		for(Agent agent: agents)
 			agent.update(currentState);

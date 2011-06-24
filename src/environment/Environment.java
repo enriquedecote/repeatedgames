@@ -34,4 +34,10 @@ public interface Environment<A> {
 	 * @return
 	 */
 	public ObservableEnvInfo currentEnvInfo();
+	
+	/**
+	 * Initializes the object with action information
+	 * @param actions
+	 */
+	public void Init(Vector<A> actions);
 }

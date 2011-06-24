@@ -82,8 +82,9 @@ public class QLearningAgent extends Agent {
 	
 	@Override
 	public void update(ObservableEnvInfo curr) {
-		
+		NFGInfo info = (NFGInfo)curr;
 			currentState = (State) stateMapper.getState(curr);
+			//System.out.println(currentState.getFeatures().toString()+", agent:"+this);
 			State prevState = (State) memory.getLast();
 			//reward.getReward(prev, currentFeat, agentId);
 			
@@ -164,15 +165,23 @@ public class QLearningAgent extends Agent {
 	}
 	
 	public void recordToLogger(ExperimentLogger log){
-		log.recordConfig("\n+++ AGENT: " + this.getClass());
-		log.recordConfig("States: " + stateMapper.getClass());
-		log.recordConfig("Action type: " + currentAction.getClass());
-		log.recordConfig("Policy: " + policy.getClass());
-		log.recordConfig("\t alpha: " + alpha);
-		log.recordConfig("\t alpha decay: " + alphaDecay);
-		log.recordConfig("\t gamma: " + gamma);
-		log.recordConfig("\t Q table init: " + Qinit);
-		log.recordConfig("Q-table:\n" + Q.toString());
+		String slog = new String();
+		String ret =	System.getProperty("line.separator");
+		slog = slog.concat("\n+++ AGENT: " + this.getClass()+ret);
+		slog = slog.concat("Action type: " + currentAction.getClass()+ret);
+		slog = slog.concat("Policy: " + policy.getClass()+ret);
+		slog = slog.concat("\t alpha: " + alpha+ret);
+		slog = slog.concat("\t alpha decay: " + alphaDecay+ret);
+		slog = slog.concat("\t gamma: " + gamma+ret);
+		slog = slog.concat("\t Q table init: " + Qinit+ret);
+		//slog.concat("Q-table:\n" + Q.toString());
+		slog = slog.concat("Q-table:" + ret);
+		for (State state : Q.keySet()) {
+			for (Object action : Q.get(state).keySet()) {
+				slog = slog.concat("["+state.getFeatures().toString()+","+action.toString()+"]:"+Q.get(state).get(action)+ret);
+			}
+		}
+		log.recordConfig(slog);
 	}
 	
 	
