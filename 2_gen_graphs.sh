@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 file=graphs$1.gplot
 
 # 1. File to plot
@@ -23,13 +23,13 @@ echo "set xlabel \"Training Episodes\"" >> $file
 echo "set ylabel \"Average Payoffs\"" >> $file
 echo "ref(x) = $4" >> $file
 
-results=`ls $1.mob`
+results=`ls *.mob`
 plotcmd="plot "
 
 for x in $results
 do
-plotcmd="$plotcmd\"$x\" using (\$1) every $3, ref(x)"
+plotcmd="$plotcmd\"$x\" using (\$1),"
 done
-echo $plotcmd >> $file
+echo ${plotcmd%?} >> $file
 
 gnuplot $file

@@ -22,7 +22,7 @@ mkdir $RESULTS/$1_$5;
 mv $1_$LOGGER*.log $RESULTS/$1_$5;
 
 echo "Statistical computation..."
-echo `ls -l $RESULTS/$1_$5`
+#echo `ls -l $RESULTS/$1_$5`
 cd $RESULTS;
 
 #$1=Directory that contains all the numerical series files
@@ -32,7 +32,8 @@ cd $RESULTS;
 #$5 Name of the output file
 #$6 Size of the fixed window used to compute the mobile average
 # Name of the octave script file
-for i in `jot 2 $3`;
+for i in `jot 2 $3`; this is for mac
+#for i in `seq $3 $4`;
     do
       rm -f $RESULTS/$1_$5/.DS*;
       $RESULTS/analyze_runs.sh $RESULTS/$1_$5 $i 0 $2 $1$i$5.mob 100;
@@ -50,7 +51,7 @@ cd $RESULTS/$1_$5;
 # 2. Graph title
 # 3. Every
 # 4. Optimal baseline
-../2mac_gen_graphs.sh $1 $1 100 3;
+../2_gen_graphs.sh $1 $1 100 3;
 
 #echo "Compressing files...";
 #cd $RESULTS;
