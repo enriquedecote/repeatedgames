@@ -33,8 +33,6 @@ import java.util.Vector;
 
 import org.w3c.dom.Element;
 
-import edu.inaoe.util.Strategy;
-import edu.inaoe.util.StrategyState;
 import experiment.ExperimentLogger;
 import experiment.Logger;
 
@@ -65,21 +63,32 @@ import util.VectorQueue;
  */
 public class BayesMDP extends Agent {
 	
+	private static final double GAMMA = 1;
 	private State state;
+	protected Map<Integer,Object> strategy;
 	private Random r;
 	
 	//MDP parameters
 	private float epsilon;
 	private MDPModel mdp;
+	private int numActions = 0;
+	private int numStates = 0;
+	private Vector<int[]> wPointsVector;
+	private String gameName;
 	
 	//given a state, returns a set of pairs <action,value>
-	Map<State,Map<Object,Double>> Q = new HashMap<State,Map<Object,Double>>();
+	Map<Integer,Map<Integer,Double>> Q = new HashMap<Integer,Map<Integer,Double>>();
 	Double Qinit;
 	VectorQueue<State> memory = new VectorQueue<State>(1);
 	
 	
 	public void init(Element e, int id){
 		super.init(e, id);
+		gameName = e.getAttribute("game");
+		getWpoints(System.getProperty("user.home") + "/programing/gambitGames/" + gameName);
+		for (int i=0; i< wPointsVector.size(); i++) {
+			constructBayesMDP(a, b)
+		}
 	}
 	// constructor
 	public BayesMDP(Reward r) {
@@ -150,7 +159,7 @@ public class BayesMDP extends Agent {
 	 * @return A vector a of strategies (each expressed as rational numbers) 
 	 * containing all strategies with indifference points
 	 */
-	public String getWpoints(String gameName){
+	public void getWpoints(String gameName){
 		String s = null;
 
         try {
@@ -164,6 +173,18 @@ public class BayesMDP extends Agent {
             System.out.println("Here is the standard output of the command:\n");
             while ((s = stdInput.readLine()) != null) {
                 System.out.println(s);
+                int from = 0;
+                int action = 0;
+                int[] actions = new int[numActions];
+                s = s.substring(2); //get the "NE," substring out of the way
+                String[] supports = s.split(",");
+                while(action < numActions){
+                	String actionFracc[] = supports[action].split("/");
+                	actions[action] = Integer.valueOf(actionFracc[0]); //numerator
+                	if(actionFracc.length > 1)
+                		assert(numActions == Integer.valueOf(actionFracc[1]));
+                }
+                wPointsVector.add(actions);
             }
             
             // read any errors from the attempted command
@@ -179,7 +200,6 @@ public class BayesMDP extends Agent {
             e.printStackTrace();
             System.exit(-1);
         }
-        return s;
     }
 	
 	/**
@@ -187,17 +207,26 @@ public class BayesMDP extends Agent {
 	 * @param a = r
 	 * @param b = k-r
 	 */
-	public void constructBayesMDP(int a, int b){
-		int numStates= (a+1)*(b+1);
-		int numActions = currentAction.getDomainSet().size();
+	public void constructBayesMDP(int[] mixedStrat){
+		numStates= (a+1)*(b+1);
+		numActions = currentAction.getDomainSet().size();
 		mdp = new MDPModel();
 		mdp.setStates(numStates);
 		mdp.setActions(numActions);// action 0 or 1
 		mdp.initialize();
 		for (int s = 0; s < numStates; s++) {//for all states s
 			for (int i = 0; i < numActions; i++) {//for all actions
-				mdp.setTransition(s, i, nextState(s,i,numStates), 1);
-				mdp.setRewardEntry(s, i, nextState(s,i,numStates), expUtility(s, i));
+				for (int s1 = 0; s1 < numStates; s1++) {//for all states s1
+					if(s1 == nextState(s,i)){
+						mdp.setTransition(s, i, s1, 1);
+						mdp.setRewardEntry(s, i, s1, expUtility(s, i));
+					}
+					else{
+						mdp.setTransition(s, i, s1, 0);
+						mdp.setRewardEntry(s, i, s1, Double.NEGATIVE_INFINITY);
+					}
+				}
+
 			}
 		}
 	}
@@ -205,16 +234,13 @@ public class BayesMDP extends Agent {
 	/**
 	 * Uses the mixed strategy r/k to check next state and validity using eq. 12 and 13
 	 * @param s state
-	 * @param action chosen action
-	 * @param a = r
-	 * @param b = k-r
-	 * @return
+	 * @param a action chosen action
+	 * @return the next state
 	 */
-	public int nextState(int s, int a, int states){
+	public int nextState(int s, int a){
 		s = s + (int) Math.pow(currentAction.getDomainSet().size(), a);
 		//if(action==0) s = s + a;
 		//if(action==1) s = s + 1;
-		int numStates= states;
 		if(s >= numStates)
 			s=0;
 		return s;
@@ -241,18 +267,57 @@ public class BayesMDP extends Agent {
 		  final double EPSILON = 0.01; 
 		  double error = 12;
 		  Vector<Object> actions = currentAction.getDomainSet();
+		  //states to double
+		  Map<Integer,Double> V = new HashMap<Integer,Double>(numActions);
 		  
-		  Map<StrategyState,Double> V = new HashMap<StrategyState,Double>(stratDomain.size());
-		  //Map<StrategyState,Map<Strategy,Double>> Q = new HashMap<StrategyState,Map<Strategy,Double>>();
-		  
-		  for (StrategyState state : stratDomain.getStateSet()) {
-			  V.put(state, 0.0);
-			  Map<Strategy,Double>Qaux = new HashMap<Strategy,Double>();
+		  for (int i=0; i< numStates; i++) {
+			  V.put(i, 0.0);
+			  //actions to double
+			  Map<Integer,Double>Qaux = new HashMap<Integer,Double>();
 			  
-			  for (Strategy action : actions) 
-				  Qaux.put(action, 0.0);
-			  Q.put(state, Qaux);
+			  for (int j=0; j< numActions; i++) 
+				  Qaux.put(j, 0.0);
+			  Q.put(i, Qaux);
 		  }	
+		  
+		  int counter = 0;
+		  while (error > EPSILON) {
+		  //while (counter< 50) {
+		  // (int  counter=0; error>EPSILON;counter++) {
+			  error = -9999;
+			  //int c=0;
+			  for (int s=0; s< numStates; s++) {
+				  double Vstate = -9999;
+				  //int c1=0;
+				  for (int a=0; a< numActions; a++) {
+					  //System.out.println(probs.size());
+					  //expected over future states
+					  double sum = 0;
+					  //System.out.println(probs.size());
+					  for (int s1 = 0; s1 < numStates; s1++) {
+						sum += mdp.getTransition(s, a, s1) * V.get(s1);
+					  }
+					  double total = mdp.getRewardEntry(s, a, nextState(s,a)) + GAMMA * sum;
+					  Q.get(s).put(a, total);
+					  if(total > Vstate){
+						  Vstate = total;
+						  strategy.put(s, a);
+					  }
+					  ///c1++;
+				  }
+				  error = Math.max(error, Math.abs(Vstate - V.get(state)));
+				  V.put(s, Vstate);
+				  //c++;
+				  //System.out.println("+++"+c);
+			  }	
+			  counter++;
+			  //System.out.println(counter);
+		  }
+		  
+		  //System.out.println(counter);
+		  //System.out.println(strattoString());
+		  
+	  }
 		  
 	public void recordToLogger(ExperimentLogger log){
 		String slog = new String();
@@ -260,15 +325,12 @@ public class BayesMDP extends Agent {
 		slog = slog.concat("\n+++ AGENT: " + this.getClass()+ret);
 		slog = slog.concat("Action type: " + currentAction.getClass()+ret);
 		slog = slog.concat("Policy: " + policy.getClass()+ret);
-		slog = slog.concat("\t alpha: " + alpha+ret);
-		slog = slog.concat("\t alpha decay: " + alphaDecay+ret);
-		slog = slog.concat("\t gamma: " + gamma+ret);
 		slog = slog.concat("\t Q table init: " + Qinit+ret);
 		//slog.concat("Q-table:\n" + Q.toString());
 		slog = slog.concat("Q-table:" + ret);
-		for (State state : Q.keySet()) {
+		for (Integer state : Q.keySet()) {
 			for (Object action : Q.get(state).keySet()) {
-				slog = slog.concat("["+state.getFeatures().toString()+","+action.toString()+"]:"+Q.get(state).get(action)+ret);
+				slog = slog.concat("["+state+","+action.toString()+"]:"+Q.get(state).get(action)+ret);
 			}
 		}
 		log.recordConfig(slog);
