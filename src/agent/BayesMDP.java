@@ -19,6 +19,9 @@
  ******************************************************************************/
 package agent;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.HashMap;
@@ -30,6 +33,8 @@ import java.util.Vector;
 
 import org.w3c.dom.Element;
 
+import edu.inaoe.util.Strategy;
+import edu.inaoe.util.StrategyState;
 import experiment.ExperimentLogger;
 import experiment.Logger;
 
@@ -42,29 +47,30 @@ import util.Action;
 import util.JointActionState;
 import util.JointActionStateDomain;
 import util.JointActionStateMapper;
+import util.MDPModel;
 import util.NFGInfo;
 import util.ObservableEnvInfo;
 import util.State;
 import util.StateDomain;
 import util.VectorQueue;
 
-// This is a subclass of agent which can be instantiated. It Creates a learning agent which has its own strategies and learnd from its mistakes
-public class QLearningAgent extends Agent {
+
+/**
+ * This is a subclass of agent which can be instantiated. 
+ * It implemets the algorithm described in 
+ * [Optimal Planning Against Bayesian Learning Opponents, Munoz de Cote and Jennings 2011]
+ * 
+ * @author Enrique Munoz de Cote
+ *
+ */
+public class BayesMDP extends Agent {
 	
-	//this is the algorithm's current high level strategy
-	//private Map<State,Action> strategy;
-	//private static StateDomain sDomain;
 	private State state;
 	private Random r;
 	
-	//learning parameters
+	//MDP parameters
 	private float epsilon;
-	private double alpha;
-
-	private static double polyAlphaDecay = 0.5000001;
-	private String alphaDecay;
-	private Map<State,Map<Action,Integer>> alpha_t;
-	private float gamma;
+	private MDPModel mdp;
 	
 	//given a state, returns a set of pairs <action,value>
 	Map<State,Map<Object,Double>> Q = new HashMap<State,Map<Object,Double>>();
@@ -74,22 +80,14 @@ public class QLearningAgent extends Agent {
 	
 	public void init(Element e, int id){
 		super.init(e, id);
-		alpha = Double.valueOf(e.getAttribute("alpha"));
-		System.out.println("\t alpha: " + alpha);
-		alphaDecay = e.getAttribute("alphaDecay");
-		System.out.println("\t alpha decay: " + alphaDecay);
-		gamma = Float.valueOf(e.getAttribute("gamma"));
-		System.out.println("\t gamma: " + gamma);
-		Qinit = Double.valueOf(e.getAttribute("Qinit"));
-		System.out.println("\t Q table init: " + Qinit);
 	}
 	// constructor
-	public QLearningAgent(Reward r) {
+	public BayesMDP(Reward r) {
 		reward = r;
 		
 	}
 	// constructor
-	public QLearningAgent(){		
+	public BayesMDP(){		
 	}
 
 	@Override
@@ -147,42 +145,115 @@ public class QLearningAgent extends Agent {
 	}
 	
 	/**
-	 * Constructs state space and strategy
-	 * @param e
+	 * takes a bimatrix game and outputs all mixed strategies for the planner that make its opponent indifferent
+	 * @param gameName
+	 * @return A vector a of strategies (each expressed as rational numbers) 
+	 * containing all strategies with indifference points
 	 */
-	public void constructStructures(ObservableEnvInfo state){
-		String s = state.getClass().toString();
-		if(s.equals("class util.NFGInfo")){
-			NFGInfo nfg = (NFGInfo) state;
+	public String getWpoints(String gameName){
+		String s = null;
 
-			stateMapper.init(nfg);
+        try {
 
-			/*			Vector<Action> vectA = nfg.currentJointAction();
-			Action a0 = vectA.get(0).newInstance();
-			Action a1 = vectA.get(1).newInstance();
-			vectA.clear();
-			vectA.add(a0); vectA.add(a1);
-			 */
-			stateDomain = stateMapper.getStateDomain();
-		}//end if
+            Process p = Runtime.getRuntime().exec("gambit-enummixed -q < " + gameName);
+            
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
 
-		
-		//construct Q table and strategy
-		strategy = new HashMap<State, Object>();
-		State st = null;
-		for (Object ob : stateDomain.getStateSet()) {
-			st = (State) ob;
-			strategy.put(st, currentAction.getCurrentState());
-			//init Q table
-			Map<Object,Double> m = new HashMap<Object, Double>();
-			for(Object o : currentAction.getDomainSet()){
-				m.put(o, Qinit);
+            // read the output from the command
+            System.out.println("Here is the standard output of the command:\n");
+            while ((s = stdInput.readLine()) != null) {
+                System.out.println(s);
+            }
+            
+            // read any errors from the attempted command
+            System.out.println("Here is the standard error of the command (if any):\n");
+            while ((s = stdError.readLine()) != null) {
+                System.out.println(s);
+            }
+            
+            System.exit(0);
+        }
+        catch (IOException e) {
+            System.out.println("exception happened - here's what I know: ");
+            e.printStackTrace();
+            System.exit(-1);
+        }
+        return s;
+    }
+	
+	/**
+	 * The argument is a mixed strategy r/k
+	 * @param a = r
+	 * @param b = k-r
+	 */
+	public void constructBayesMDP(int a, int b){
+		int numStates= (a+1)*(b+1);
+		int numActions = currentAction.getDomainSet().size();
+		mdp = new MDPModel();
+		mdp.setStates(numStates);
+		mdp.setActions(numActions);// action 0 or 1
+		mdp.initialize();
+		for (int s = 0; s < numStates; s++) {//for all states s
+			for (int i = 0; i < numActions; i++) {//for all actions
+				mdp.setTransition(s, i, nextState(s,i,numStates), 1);
+				mdp.setRewardEntry(s, i, nextState(s,i,numStates), expUtility(s, i));
 			}
-			Q.put(st, m);
 		}
-		memory.offerFirst(st);
 	}
 	
+	/**
+	 * Uses the mixed strategy r/k to check next state and validity using eq. 12 and 13
+	 * @param s state
+	 * @param action chosen action
+	 * @param a = r
+	 * @param b = k-r
+	 * @return
+	 */
+	public int nextState(int s, int a, int states){
+		s = s + (int) Math.pow(currentAction.getDomainSet().size(), a);
+		//if(action==0) s = s + a;
+		//if(action==1) s = s + 1;
+		int numStates= states;
+		if(s >= numStates)
+			s=0;
+		return s;
+	}
+	
+	public double expUtility(int s, int a){
+		float[] strat = opponentModel(s);
+		double util = 0;
+		Vector actions = new Vector();
+		actions.add(a);
+		for (int i = 0; i < strat.length; i++) {
+			actions.add(i);
+			util = util + strat[i]*reward.getReward(actions, 0);
+		}
+		return util;
+	}
+	
+	public float[] opponentModel(int s){
+		//TODO: implement
+		return null;
+	}
+	
+	  public void ValueIteration(){
+		  final double EPSILON = 0.01; 
+		  double error = 12;
+		  Vector<Object> actions = currentAction.getDomainSet();
+		  
+		  Map<StrategyState,Double> V = new HashMap<StrategyState,Double>(stratDomain.size());
+		  //Map<StrategyState,Map<Strategy,Double>> Q = new HashMap<StrategyState,Map<Strategy,Double>>();
+		  
+		  for (StrategyState state : stratDomain.getStateSet()) {
+			  V.put(state, 0.0);
+			  Map<Strategy,Double>Qaux = new HashMap<Strategy,Double>();
+			  
+			  for (Strategy action : actions) 
+				  Qaux.put(action, 0.0);
+			  Q.put(state, Qaux);
+		  }	
+		  
 	public void recordToLogger(ExperimentLogger log){
 		String slog = new String();
 		String ret =	System.getProperty("line.separator");
@@ -202,6 +273,7 @@ public class QLearningAgent extends Agent {
 		}
 		log.recordConfig(slog);
 	}
+	
 	
 	
 }
