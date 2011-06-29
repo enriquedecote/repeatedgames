@@ -30,6 +30,7 @@ public class MDPModel implements Serializable {
     boolean modified = false;
     int debrisInd = -1;
     public int startingStateNo = -1;
+    private double gainOpt = 0;
 
     public MDPModel() {
     }
@@ -88,6 +89,14 @@ public class MDPModel implements Serializable {
         double fin = (double) l / (double) Math.pow(10, places-1);
 
         return fin;
+    }
+    
+    public void setGainOptimalReward(double g){
+    	this.gainOpt = g;
+    }
+    
+    public double getGainOptimalReward(){
+    	return gainOpt;
     }
 
 

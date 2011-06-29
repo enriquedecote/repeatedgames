@@ -71,13 +71,13 @@ public class BayesMDP extends Agent {
 	//MDP parameters
 	private float epsilon;
 	private MDPModel mdp;
-	private int numActions = 0;
-	private int numStates = 0;
+	private int numActions = 1;
+	private int numStates = 1;
 	private Vector<int[]> wPointsVector;
 	private String gameName;
 	
 	//given a state, returns a set of pairs <action,value>
-	Map<Integer,Map<Integer,Double>> Q = new HashMap<Integer,Map<Integer,Double>>();
+	Map<Integer,Map<Integer,Double>> Q;
 	Double Qinit;
 	VectorQueue<State> memory = new VectorQueue<State>(1);
 	
@@ -86,9 +86,17 @@ public class BayesMDP extends Agent {
 		super.init(e, id);
 		gameName = e.getAttribute("game");
 		getWpoints(System.getProperty("user.home") + "/programing/gambitGames/" + gameName);
-		for (int i=0; i< wPointsVector.size(); i++) {
-			constructBayesMDP(a, b)
+		
+		double g = 0; //gain optimal max value
+		int maxW=0;
+		for (int i=0; i< wPointsVector.size(); i++){
+			constructBayesMDP(wPointsVector.get(i));
+			if(mdp.getGainOptimalReward() > g){
+				maxW = i;
+				g = mdp.getGainOptimalReward();
+			}
 		}
+		
 	}
 	// constructor
 	public BayesMDP(Reward r) {
@@ -208,7 +216,9 @@ public class BayesMDP extends Agent {
 	 * @param b = k-r
 	 */
 	public void constructBayesMDP(int[] mixedStrat){
-		numStates= (a+1)*(b+1);
+		for (int i = 0; i < mixedStrat.length; i++) 
+			numStates *= (mixedStrat[i]+1);
+
 		numActions = currentAction.getDomainSet().size();
 		mdp = new MDPModel();
 		mdp.setStates(numStates);
@@ -263,12 +273,20 @@ public class BayesMDP extends Agent {
 		return null;
 	}
 	
-	  public void ValueIteration(){
+	  /**
+	 * Implements av. reward VI as described in Jalali and Ferguson (Jalali & Ferguson, 1990) describe 
+	 * an asynchronous value iteration algorithm that provably converges to produce a gain-optimal policy 
+	 * if there is a state s E S that is reachable from every other state under all stationary policies.
+	 * The recurring state in BayesMDP case is always the last one (i.e. s=numStates)
+	 */
+	public void averageRewardVI(){
 		  final double EPSILON = 0.01; 
 		  double error = 12;
+		  double p=0;//for iterative version of arithmetic mean
 		  Vector<Object> actions = currentAction.getDomainSet();
 		  //states to double
 		  Map<Integer,Double> V = new HashMap<Integer,Double>(numActions);
+		  Q = new HashMap<Integer,Map<Integer,Double>>(numStates);
 		  
 		  for (int i=0; i< numStates; i++) {
 			  V.put(i, 0.0);
@@ -298,7 +316,12 @@ public class BayesMDP extends Agent {
 						sum += mdp.getTransition(s, a, s1) * V.get(s1);
 					  }
 					  double total = mdp.getRewardEntry(s, a, nextState(s,a)) + GAMMA * sum;
-					  Q.get(s).put(a, total);
+					  total -= p;//this is the average dicount for containing the sum (see Mahadevan Av. reward)
+					  p = p + (1/counter+1)*(mdp.getRewardEntry(s, a, nextState(s,a))-p);//iterative mean
+					  if(s!=numStates-1)//the last state (which is recurring under any policy)
+						  Q.get(s).put(a, total);
+					  else
+						  Q.get(s).put(a, 0.0);
 					  if(total > Vstate){
 						  Vstate = total;
 						  strategy.put(s, a);
@@ -316,6 +339,7 @@ public class BayesMDP extends Agent {
 		  
 		  //System.out.println(counter);
 		  //System.out.println(strattoString());
+		  mdp.setGainOptimalReward(V.get(0));
 		  
 	  }
 		  
