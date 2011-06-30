@@ -155,9 +155,10 @@ public class ReadXml {
 
 	/**
 	 * searches through the XML file to gather agent types and creates them
+	 * @param rewards 
 	 * @return the type of agent_i
 	 */
-	public Vector<Agent> constructAgents(){
+	public Vector<Agent> constructAgents(Reward rewards){
 		NodeList players = docEle.getElementsByTagName("Player");
 		//there is only one env definition so there is only one in the list
 		//NodeList agentTypeList = nodes.item(0).getChildNodes();
@@ -170,6 +171,7 @@ public class ReadXml {
 			String name = e.getAttribute("name");
 			System.out.println(name);
 			Agent agent = (Agent)factory.getBean(name);
+			agent.init(rewards);
 			agent.init(e, i);
 			agents.add(agent);
 		}

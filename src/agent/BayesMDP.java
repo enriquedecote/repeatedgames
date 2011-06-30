@@ -72,9 +72,14 @@ public class BayesMDP extends Agent {
 	private float epsilon;
 	private MDPModel mdp;
 	private int numActions = 1;
+	private int oppActions = 1;
 	private int numStates = 1;
-	private Vector<int[]> wPointsVector;
+	private Vector<int[]> wPointsVector = new Vector<int[]>();
 	private String gameName;
+	private int currState = 0;
+	private boolean searchingIndiffPoint = false;
+	private int actionR; //for best equilibrium r/k
+	private int totalActions;//for best equilibrium = k-r
 	
 	//given a state, returns a set of pairs <action,value>
 	Map<Integer,Map<Integer,Double>> Q;
@@ -84,7 +89,10 @@ public class BayesMDP extends Agent {
 	
 	public void init(Element e, int id){
 		super.init(e, id);
+		numActions = currentAction.getDomainSet().size();
+
 		gameName = e.getAttribute("game");
+		oppActions = Integer.valueOf(e.getAttribute("oppActions"));
 		getWpoints(System.getProperty("user.home") + "/programing/gambitGames/" + gameName);
 		
 		double g = 0; //gain optimal max value
@@ -97,6 +105,7 @@ public class BayesMDP extends Agent {
 			}
 		}
 		
+		constructBayesMDP(wPointsVector.get(maxW));
 	}
 	// constructor
 	public BayesMDP(Reward r) {
@@ -110,55 +119,50 @@ public class BayesMDP extends Agent {
 	@Override
 	// gets current action of agent
 	public Action getAction() {
-	
 		return currentAction;
 	}
 	
 	@Override
 	public void update(ObservableEnvInfo curr) {
 		NFGInfo info = (NFGInfo)curr;
-			currentState = (State) stateMapper.getState(curr);
-			//System.out.println(currentState.getFeatures().toString()+", agent:"+this);
-			State prevState = (State) memory.getLast();
-			//reward.getReward(prev, currentFeat, agentId);
-			
-			Double val=Double.NEGATIVE_INFINITY;
-			Double maxQ = null;
-			Object action = null;
-			//get action=arg max_{a} and maxQ=max_{a}
-			for(Object o : Q.get(currentState).keySet()){
-				if(Q.get(currentState).get(o) >= val){
-					action = o;
-					maxQ = Q.get(currentState).get(o);
-					val = maxQ;
-				}
-			}
-			Vector<Action> currJointAct =  stateMapper.getActions(curr);
-			Vector<Object> currO = new Vector<Object>();
-			for (Action act : currJointAct) 
-				currO.add(act.getCurrentState());
-	
-			int currReward = reward.getReward(curr, currO, agentId);
-			Map<Object, Double> mapQ = Q.get(prevState);
-			Action actQ = currJointAct.get(agentId);
-			Double Qval = Q.get(prevState).get(currJointAct.get(agentId).getCurrentState());
-			//System.out.println("R("+currO+")="+reward.getReward(curr, currO, agentId));
-			Double newQ =
-			(1-alpha)*Qval +
-			alpha*(reward.getReward(curr, currO, agentId) + gamma*maxQ);
+		Vector<Action> currJointAct =  stateMapper.getActions(curr);
+		Vector<Object> currO = new Vector<Object>();
+		
+		for (Action act : currJointAct) 
+			currO.add(act.getCurrentState());
 
-			//update Q value
-			Q.get(prevState).put(currJointAct.get(agentId).getCurrentState(), newQ);
-			
+		int currReward = reward.getReward(curr, currO, agentId);
+		
+		//update state
+		currState = nextState(currState, (Integer)currentAction.getCurrentState());
+		
+		if(!isPredictedReward(currReward) || searchingIndiffPoint)
+			find_w();
+		else{
 			//choose a new action
-			currentAction.changeToState(policy.getNextAction(action)); 
-			
-			if(alphaDecay.equalsIgnoreCase("POLY"))
-				alpha = 1/(Math.pow((double)round, polyAlphaDecay));
-			round++;
-			memory.offerFirst(currentState);
+			currentAction.changeToState(strategy.get(currState)); 
+		}
+		
+		round++;
+		memory.offerFirst(currentState);
 		
 		//log.flush();
+	}
+	
+	private boolean isPredictedReward(int currRew){
+		if(currState == 0)
+			return true;
+		else{
+			double expRew = mdp.getRewardEntry(currState, (Integer)currentAction.getCurrentState(), nextState(currState,(Integer)currentAction.getCurrentState()));
+			if(expRew==currRew)
+				return true;
+			else
+				return false;
+		}
+	}
+	
+	private void find_w(){
+		
 	}
 	
 	/**
@@ -171,37 +175,42 @@ public class BayesMDP extends Agent {
 		String s = null;
 
         try {
-
-            Process p = Runtime.getRuntime().exec("gambit-enummixed -q < " + gameName);
-            
+        	//String[] cmd = new String[]{"/bin/sh", "-c", "gambit-enummixed","<" + gameName};
+        	//String cmd = "/bin/sh -c 'gambit-enummixed < "+ gameName+"'";
+        	String cmd = "/home/enrique/programing/gambitGames/launch.sh " +gameName;
+        	Process p = Runtime.getRuntime().exec(cmd);
+            //Process p = Runtime.getRuntime().exec("/usr/bin/gambit-enummixed -q < " + gameName+ "> sol.txt");
+        	//Process p = Runtime.getRuntime().exec("cat " + gameName+ "> sol.txt");
+            //Process p = Runtime.getRuntime().exec("ls -l");
+        	
             BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
             BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
-
+            
             // read the output from the command
-            System.out.println("Here is the standard output of the command:\n");
+            //System.out.println("Here is the standard output of the command:\n");
+            //System.out.println(stdInput.readLine());
             while ((s = stdInput.readLine()) != null) {
                 System.out.println(s);
                 int from = 0;
                 int action = 0;
                 int[] actions = new int[numActions];
-                s = s.substring(2); //get the "NE," substring out of the way
+                s = s.substring(3); //get the "NE," substring out of the way
                 String[] supports = s.split(",");
                 while(action < numActions){
                 	String actionFracc[] = supports[action].split("/");
                 	actions[action] = Integer.valueOf(actionFracc[0]); //numerator
                 	if(actionFracc.length > 1)
                 		assert(numActions == Integer.valueOf(actionFracc[1]));
+                	action++;
                 }
                 wPointsVector.add(actions);
             }
             
             // read any errors from the attempted command
-            System.out.println("Here is the standard error of the command (if any):\n");
+            //System.out.println("Here is the standard error of the command (if any):\n");
             while ((s = stdError.readLine()) != null) {
                 System.out.println(s);
             }
-            
-            System.exit(0);
         }
         catch (IOException e) {
             System.out.println("exception happened - here's what I know: ");
@@ -244,11 +253,12 @@ public class BayesMDP extends Agent {
 	/**
 	 * Uses the mixed strategy r/k to check next state and validity using eq. 12 and 13
 	 * @param s state
-	 * @param a action chosen action
+	 * @param a chosen action
+	 * @param inc increment (the number of times the most significant action is played (e.g. 4/7, inc=4)
 	 * @return the next state
 	 */
-	public int nextState(int s, int a){
-		s = s + (int) Math.pow(currentAction.getDomainSet().size(), a);
+	private int nextState(int s, int a, int inc){
+		s = s + 1 + (int)Math.pow(inc, a);
 		//if(action==0) s = s + a;
 		//if(action==1) s = s + 1;
 		if(s >= numStates)
@@ -257,13 +267,21 @@ public class BayesMDP extends Agent {
 	}
 	
 	public double expUtility(int s, int a){
-		float[] strat = opponentModel(s);
+		Vector<Integer> br = BR(s);
+		double[] strat = new double[oppActions];
+		for (int i = 0; i < strat.length; i++) {
+			if(br.contains(i))
+				strat[i] = (double)1/(double)br.size();
+			else
+				strat[i] = 0.0;
+		}
 		double util = 0;
 		Vector actions = new Vector();
 		actions.add(a);
 		for (int i = 0; i < strat.length; i++) {
 			actions.add(i);
 			util = util + strat[i]*reward.getReward(actions, 0);
+			actions.removeElementAt(1);
 		}
 		return util;
 	}
@@ -271,6 +289,71 @@ public class BayesMDP extends Agent {
 	public float[] opponentModel(int s){
 		//TODO: implement
 		return null;
+	}
+	
+	public Vector<Integer> BR(int s){
+		//get planner strategy
+		double[] strat = stateToStrat(s);
+		
+		double maxUtil = Double.NEGATIVE_INFINITY;
+		Vector<Integer> maxAct = new Vector<Integer>();
+		for (int i = 0; i < oppActions; i++) {
+			double util = 0;
+			Vector actions = new Vector();
+			actions.add(0);//planner's action (it will be removed later in the for cycle
+			actions.add(i);
+			for (int j = 0; j < strat.length; j++) {
+				actions.remove(0); actions.add(0, j);
+				double r = reward.getReward(actions, 1);
+				util = util + strat[j]*reward.getReward(actions, 1);
+			}
+			
+			if(util==maxUtil)
+				maxAct.add(i);
+			if(util > maxUtil){
+				maxAct.removeAllElements();
+				maxAct.add(i);
+				maxUtil = util;
+			}
+		}
+		
+		return maxAct;
+	}
+	
+	private int[] stateToActions(int n){
+		int[] strat = new int[numActions];
+	       int i=0;
+	       while (n > 0) {
+	          strat[i] = n % numActions;
+	          n = n/numActions;
+	          i++;
+	       }
+	       assert(strat.length == numActions);
+	       return strat;
+	}
+	
+	private double[] stateToStrat(int n){
+		int[] aux = stateToActions(n);
+		double[] strat = new double[numActions];
+		
+		if(n == 0){
+			for (int i = 0; i < strat.length; i++) {
+				strat[i] = (double)1/(double)numActions;
+			}
+			return strat;
+		}
+			
+			
+		int sum=0;
+		for (int i = 0; i < aux.length; i++)
+			sum += aux[i];
+		
+		for (int i = 0; i < aux.length; i++)
+			strat[i] = (double)aux[i]/(double)sum;
+		
+	    assert(strat.length == numActions);
+	    
+	    return strat;
 	}
 	
 	  /**

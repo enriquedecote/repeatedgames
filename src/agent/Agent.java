@@ -40,16 +40,16 @@ public abstract class Agent {
 	protected Action currentAction;
 	protected Reward reward;
 	protected int round = 0;
-	protected IPolicy policy;
+	protected IPolicy policy; // policy= strategy + exploration strategy
 	protected ActionDomain aDomain; 
-	protected Map<State,Object> strategy;
+	protected Map<State,Object> strategy; //this is the strategy of the agent
 	protected int agentId;
 	protected StateMapper stateMapper;
 	protected ExperimentLogger log;
 	
 	public enum Policy
 	{
-	    EGREEDY, BOLTZMAN, RANDOM; 
+	    EGREEDY, BOLTZMAN, RANDOM, _; 
 	}
 	
 	public enum ActionType
@@ -134,7 +134,8 @@ public abstract class Agent {
 			System.err.print("\t Boltzman exploration is not yet implemented");
 			break;
 		
-		default:
+		case _:
+			policy = null;
 			break;
 		}
 		

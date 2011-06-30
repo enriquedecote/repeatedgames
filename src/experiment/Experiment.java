@@ -98,12 +98,11 @@ public class Experiment {
 			}
 			
 			// create all elements from XML
-			agents = xml.constructAgents();
+			agents = xml.constructAgents(rewards);
 			Vector<Action> jointAction = new Vector<Action>(agents.size());
-			for (Agent agent : agents){
-				agent.init(rewards);
+			for (Agent agent : agents)
 				jointAction.add(agent.getAction());
-			}
+			
 			//get state info to construct agent's structures
 			env = xml.constructEnvironment();
 			env.Init(jointAction);
