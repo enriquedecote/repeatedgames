@@ -52,7 +52,7 @@ public  class StrategyState extends State<Strategy,Strategy> {
 		experience = new HashMap<Strategy, Integer>(strategySet.size());
 		for (Iterator<Strategy> iterator = strategySet.iterator(); iterator.hasNext();) {//for all actions
 			Strategy strat = (Strategy) iterator.next();
-			HashMap<State,Integer> nextState = new HashMap<State,Integer>(1);
+			HashMap<State<Strategy,Strategy>,Integer> nextState = new HashMap<State<Strategy,Strategy>,Integer>(1);
 			nextState.put(s0, 1);
 			T.put(strat, nextState);
 			reward.put(strat, Rmax/(1-GAMMA));
@@ -87,6 +87,7 @@ public  class StrategyState extends State<Strategy,Strategy> {
 		else
 			T.get(strat).put(state, T.get(strat).get(state)+1);
 		//this should be an (exponential) average
+		//TODO: check this update
 		double p = (1-GAMMA) *reward.get(strat) + GAMMA * r;
 		reward.put(strat, p);
 		experience.put(strat, experience.get(strat)+1);

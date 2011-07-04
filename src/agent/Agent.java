@@ -23,6 +23,9 @@ import java.util.Map;
 import java.util.Vector;
 
 import reward.Reward;
+//import strategy.ExternalRegretMatchingStrategy;
+//import strategy.GIGA;
+//import strategy.InternalRegretMatchingStrategy;
 
 import util.*;
 
@@ -32,7 +35,20 @@ import experiment.ExperimentLogger;
 import experiment.Logger;
 
 
-// This is the agent super class, It holds all the generic fields and methods common it its subclasses 
+/**
+ * An abstract class for strategies which depend only upon
+ * the utility of the action taken and the utility the player 
+ * would have gotten had it taken another strategy.
+ * 
+ * @see ExternalRegretMatchingStrategy
+ * @see InternalRegretMatchingStrategy
+ * @see GIGA
+ * 
+ * This class also provides a random number generator. It is unclear
+ * if this is the best place for it.
+ * @author Enrique Munoz de Cote
+ *
+ */
 public abstract class Agent {
 	protected ObservableEnvInfo currentEnvInfo;
 	protected State currentState;
@@ -107,7 +123,7 @@ public abstract class Agent {
 		//action
 		switch (ActionType.valueOf(e.getAttribute("actionType"))) {
 		case TWOACTIONS:
-			currentAction = new TwoActions();
+			currentAction = new TwoActions(agentId);
 			break;
 			
 		case NINTACTIONS:	
@@ -141,6 +157,9 @@ public abstract class Agent {
 		
 	}
 	
+	public int getId(){
+		return agentId;
+	}
 	public void constructStructures(ObservableEnvInfo state){
 	}
 	

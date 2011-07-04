@@ -55,6 +55,7 @@ public class NintegerAction extends Action {
 		agentId = id;
 	}
 	
+	
 	public NintegerAction newInstance(){
 		return new NintegerAction(size, agentId);
 	}

@@ -59,9 +59,9 @@ public abstract class Action {
 		}
 		state = domain.getFirstAction();
 	}
-	// returns name of the action 
-	public String getName (){
-		return actionName;
+	// returns int id of the owner of the action 
+	public int getOwnerId (){
+		return owner;
 	}
 
 	/* returns a set of actions

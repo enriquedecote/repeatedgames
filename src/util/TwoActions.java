@@ -19,6 +19,8 @@
  ******************************************************************************/
 package util;
 
+import agent.Agent;
+
 /*
  *  the types of enum actions required in the lemonade game 
  *  this class extends from generic type action
@@ -41,5 +43,10 @@ public class TwoActions extends Action{
 		super ();
 		actionSet.add(One);
 		actionSet.add(Two);
+	}
+
+
+	public TwoActions(Agent agent) {
+		super(agent);
 	}
 }

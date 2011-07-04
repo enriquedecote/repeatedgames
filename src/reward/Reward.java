@@ -23,25 +23,27 @@ import java.util.Vector;
 
 import util.Action;
 import util.ObservableEnvInfo;
-import util.State;
 
-// Generic type reward 
-public abstract class Reward {
+/**
+ * An interface representing the reward function of a game.
+ * Rewards are integers instead of doubles so there are
+ * no issues with representation.
+ * @author Enrique Munoz de Cote
+ *
+ */
+public interface Reward {
 
  
- public void Init(String game){
-	 
- }
- public int getReward(ObservableEnvInfo s, Vector<Object> actions, int agent){
-	 return Integer.MIN_VALUE;
- }
+ public void Init(String game);
  
- public int getReward(Vector<Object> actions, int agent){
-	 return Integer.MIN_VALUE;
- }
+ public int getReward(ObservableEnvInfo s, Vector<Object> actions, int agent);
  
- public int[] getRewards(ObservableEnvInfo s, Vector<Action> actions){
-	 return null;
- }
+ public int getReward(Vector<Object> actions, int agent);
+ 
+ public int[] getRewards(ObservableEnvInfo s, Vector<Action> actions);
+ 
+ public boolean isSymmetric();
+ 
+ public Reward swapPlayers(int i, int j);
 
 }

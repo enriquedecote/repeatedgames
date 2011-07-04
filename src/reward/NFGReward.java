@@ -34,7 +34,7 @@ import util.State;
  * @author Enrique Munoz de Cote
  * This class creates rewards for different classic games
  */
-public class NFGReward extends Reward{
+public class NFGReward implements Reward{
 	/**
 	 * the first Vector of string is a vector of actions (as strings), the second String is the id of the agent, 
 	 * the int is the reward
@@ -157,6 +157,12 @@ public class NFGReward extends Reward{
 			feats.add(jointAction.get(i).getCurrentState());
 		}
 		return feats;
+	}
+	
+	@Override
+	public boolean isSymmetric() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 
