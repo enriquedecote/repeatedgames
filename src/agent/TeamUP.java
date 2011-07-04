@@ -19,8 +19,6 @@
  ******************************************************************************/
 package agent;
 
-import game.Game;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -131,7 +129,7 @@ public class TeamUP extends Agent {
 		for (Action act : currJointAct) 
 			currO.add(act.getCurrentState());
 		
-		int currReward = reward.getReward(curr, currO, agentId);
+		double currReward = reward.getReward(curr, currO, agentId);
 		
 	    for (int i = 0; i < opponents.length; i++) {
 	    	assert(currJointAct.get(i).getOwnerId() == i);
@@ -158,7 +156,7 @@ public class TeamUP extends Agent {
 	 * @param r instantaneous reward
 	 * @return true if replanning is required
 	 */
-	public boolean update1(Vector<Strategy> jointStrat, int r){
+	public boolean update1(Vector<Strategy> jointStrat, double r){
 		  boolean update = false;
 		  currentState = states.get(jointStrat);
 		  //currentState.update(currentStrategy(currentState), r);

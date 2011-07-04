@@ -32,5 +32,6 @@
 </bean>
 	<bean id="gridEnv" class="environment.GridEnvironment"></bean>
 	<bean id="rNFG" class="reward.NFGReward"></bean>
+	<bean id="gamutGame" class="reward.GamutReward"></bean>
 	<bean id="rnfgEnv" class="environment.NFGEnvironment" singleton = "false"></bean>
 </beans> 

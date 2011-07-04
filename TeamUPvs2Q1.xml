@@ -20,7 +20,7 @@
 <Test>
 <Environment>
 <Type>
-	<rNFG type="rNFG" game="PD" name="rnfgEnv"></rNFG></Type>
+	<gamutGame type="gamutGame" game="NPlayerPrisonersDilemma" name="rnfgEnv"></gamutGame></Type>
 
 
 

@@ -123,12 +123,12 @@ public class QLearningAgent extends Agent {
 			for (Action act : currJointAct) 
 				currO.add(act.getCurrentState());
 	
-			int currReward = reward.getReward(curr, currO, agentId);
+			double currReward = reward.getReward(curr, currO, agentId);
 			Map<Object, Double> mapQ = Q.get(prevState);
 			Action actQ = currJointAct.get(agentId);
-			Double Qval = Q.get(prevState).get(currJointAct.get(agentId).getCurrentState());
+			double Qval = Q.get(prevState).get(currJointAct.get(agentId).getCurrentState());
 			//System.out.println("R("+currO+")="+reward.getReward(curr, currO, agentId));
-			Double newQ =
+			double newQ =
 			(1-alpha)*Qval +
 			alpha*(reward.getReward(curr, currO, agentId) + gamma*maxQ);
 

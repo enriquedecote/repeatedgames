@@ -36,11 +36,11 @@ public interface Reward {
  
  public void Init(String game);
  
- public int getReward(ObservableEnvInfo s, Vector<Object> actions, int agent);
+ public double getReward(ObservableEnvInfo s, Vector<Object> actions, int agent);
  
- public int getReward(Vector<Object> actions, int agent);
+ public double getReward(Vector<Object> actions, int agent);
  
- public int[] getRewards(ObservableEnvInfo s, Vector<Action> actions);
+ public double[] getRewards(ObservableEnvInfo s, Vector<Action> actions);
  
  public boolean isSymmetric();
  

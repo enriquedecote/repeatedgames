@@ -19,7 +19,9 @@
  ******************************************************************************/
 package environment;
 import java.util.HashMap;
+import java.util.Vector;
 
+import util.ObservableEnvInfo;
 import util.readxmlv2;
 
 
@@ -27,7 +29,7 @@ import util.readxmlv2;
  * subclass of environment, it can be implemented.
  * created a lemonade environment for the game
  */
-public class LemonadeEnv extends Environment {
+public class LemonadeEnv implements Environment {
 	
 	// sets the lemonade environment
 	public void setRewardCircle (int position, int reward){
@@ -38,6 +40,24 @@ public class LemonadeEnv extends Environment {
 	public void init (){
 		readxmlv2.getsteps();
 
+	}
+
+	@Override
+	public void Init(Vector actions) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public ObservableEnvInfo currentEnvInfo() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ObservableEnvInfo nextEnvInfo(Vector actions) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
