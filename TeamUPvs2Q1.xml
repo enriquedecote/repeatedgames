@@ -27,7 +27,7 @@
 <Players><Player>
 	<TeamUP epsilon="0.1" epsilonDecay="POLY"
 		gamma="0.05" rho="0.5" k="15" shaping="true" policy="EGREEDY" name="TeamUP" actionType="NINTACTIONS" numActions="2" stateType="JOINTACTIONS"
-		 players="3" actions"2,2">
+		 players="3" oppNumActions"2,2">
 	</TeamUP></Player>
   <Player>
 	<q-learning epsilon="0.1" epsilonDecay="POLY" alpha="0.3"

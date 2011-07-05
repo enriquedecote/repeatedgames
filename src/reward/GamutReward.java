@@ -109,7 +109,7 @@ public class GamutReward implements Reward{
 	
 	@Override
 	public double[] getRewards(Vector<Object> jointAction){
-		int s = toState(toFeatures(jointAction));
+		int s = toState(jointAction);
 		double[] r = new double[numAgents];
 		for (int i = 0; i < r.length; i++)
 			r[i] = rewards.get(s).get(i);
@@ -201,6 +201,11 @@ public class GamutReward implements Reward{
 			}
 			rewards.put(i, rew);
 		}
+	}
+
+	@Override
+	public int[] getNumActions() {
+		return agentsActions;
 	}
 
 }

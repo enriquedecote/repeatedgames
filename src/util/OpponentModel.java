@@ -28,7 +28,7 @@ public class OpponentModel {
 		private double stick = 6; //values range from 0 to 6
 		//private Map<Boolean, Double> followIndex = new HashMap<Boolean, Double>();
 		private int strat[];
-		private int id;
+		private int agentId;
 		private Vector<Integer> sequence = new  Vector<Integer>();
 		private Deque<Integer> pastActions; // this player's actions done in the past, with a window of size CAPACITY
 		private static final int CAPACITY = 10;
@@ -39,7 +39,7 @@ public class OpponentModel {
 		
 		public OpponentModel(int actions, int id){
 			this.numActions = actions;
-			this.id = id;
+			this.agentId = id;
 			strat = new int[numActions];
 			myLastActions = new int[2];
 			java.util.Arrays.fill(strat,0);
@@ -178,5 +178,8 @@ public class OpponentModel {
 		}
 		public int currentAction(){
 			return pastActions.getFirst();
+		}
+		public int getId(){
+			return agentId;
 		}
 }

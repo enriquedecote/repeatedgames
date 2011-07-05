@@ -39,23 +39,23 @@ public class NFGReward implements Reward{
 	 * the first Vector of string is a vector of actions (as strings), the second String is the id of the agent, 
 	 * the int is the reward
 	 */
-	Map<Vector<Integer>, Map<String,double>> rewards;
+	Map<Vector<Integer>, Map<String,Double>> rewards;
 	Vector<Integer> jointA = new Vector<Integer>(2);
 	Vector<Integer> jointA1 = new Vector<Integer>(2);
 	Vector<Integer> jointA2 = new Vector<Integer>(2);
 	Vector<Integer> jointA3 = new Vector<Integer>(2);
 	
-	Map<String,Integer> r = new HashMap<String, Integer>();
-	Map<String,Integer> r1 = new HashMap<String, Integer>();
-	Map<String,Integer> r2 = new HashMap<String, Integer>();
-	Map<String,Integer> r3 = new HashMap<String, Integer>();
+	Map<String,Double> r = new HashMap<String, Double>();
+	Map<String,Double> r1 = new HashMap<String, Double>();
+	Map<String,Double> r2 = new HashMap<String, Double>();
+	Map<String,Double> r3 = new HashMap<String, Double>();
 	public enum Game
 	{
 	    PD, CHICKEN, BOS, FOURSEVENTHS; 
 	}
 
 	public NFGReward () {
-		rewards = new HashMap<Vector<Integer>, Map<String,double>>();
+		rewards = new HashMap<Vector<Integer>, Map<String,Double>>();
 	}
 	// generates the reward function
 	public void Init (String game) {
@@ -63,61 +63,61 @@ public class NFGReward implements Reward{
 		switch (Game.valueOf(game)) {
 		
 		case PD: //0 = D, 1 = C
-			jointA.add(0); jointA.add(0); r.put("row", 1); r.put("col", 1);
+			jointA.add(0); jointA.add(0); r.put("row", 1.0); r.put("col", 1.0);
 			rewards.put(jointA, r);
 			
-			jointA1.add(0); jointA1.add(1); r1.put("row", 4); r1.put("col", 0);
+			jointA1.add(0); jointA1.add(1); r1.put("row", 4.0); r1.put("col", 0.0);
 			rewards.put(jointA1, r1);
 			
-			jointA2.add(1); jointA2.add(0); r2.put("row", 0); r2.put("col", 4);
+			jointA2.add(1); jointA2.add(0); r2.put("row", 0.0); r2.put("col", 4.0);
 			rewards.put(jointA2, r2);
 
-			jointA3.add(1); jointA3.add(1); r3.put("row", 3); r3.put("col", 3);
+			jointA3.add(1); jointA3.add(1); r3.put("row", 3.0); r3.put("col", 3.0);
 			rewards.put(jointA3, r3);
 			break;
 
 		case CHICKEN: //0 = D, 1 = C
 
-			jointA.add(0); jointA.add(0); r.put("row", 3); r.put("col", 3);
+			jointA.add(0); jointA.add(0); r.put("row", 3.0); r.put("col", 3.0);
 			rewards.put(jointA, r);
 
-			jointA1.add(0); jointA1.add(1); r1.put("row", 2); r1.put("col", 5);
+			jointA1.add(0); jointA1.add(1); r1.put("row", 2.0); r1.put("col", 5.0);
 			rewards.put(jointA1, r1);
 
-			jointA2.add(1); jointA2.add(0); r2.put("row", 5); r2.put("col", 2);
+			jointA2.add(1); jointA2.add(0); r2.put("row", 5.0); r2.put("col", 2.0);
 			rewards.put(jointA2, r2);
 
-			jointA3.add(1); jointA3.add(1); r3.put("row", 1); r3.put("col", 1);
+			jointA3.add(1); jointA3.add(1); r3.put("row", 1.0); r3.put("col", 1.0);
 			rewards.put(jointA3, r3);
 			break;
 			
 		case BOS: //0 = D, 1 = C
 
-			jointA.add(0); jointA.add(0); r.put("row", 5); r.put("col", 3);
+			jointA.add(0); jointA.add(0); r.put("row", 5.0); r.put("col", 3.0);
 			rewards.put(jointA, r);
 
-			jointA1.add(0); jointA1.add(1); r1.put("row", 0); r1.put("col", 0);
+			jointA1.add(0); jointA1.add(1); r1.put("row", 0.0); r1.put("col", 0.0);
 			rewards.put(jointA1, r1);
 
-			jointA2.add(1); jointA2.add(0); r2.put("row", 0); r2.put("col",0);
+			jointA2.add(1); jointA2.add(0); r2.put("row", 0.0); r2.put("col",0.0);
 			rewards.put(jointA2, r2);
 
-			jointA3.add(1); jointA3.add(1); r3.put("row", 3); r3.put("col", 5);
+			jointA3.add(1); jointA3.add(1); r3.put("row", 3.0); r3.put("col", 5.0);
 			rewards.put(jointA3, r3);
 			break;
 			
 		case FOURSEVENTHS: //0 = D, 1 = C
 
-			jointA.add(0); jointA.add(0); r.put("row", -1); r.put("col", 1);
+			jointA.add(0); jointA.add(0); r.put("row", -1.0); r.put("col", 1.0);
 			rewards.put(jointA, r);
 
-			jointA1.add(0); jointA1.add(1); r1.put("row", 2); r1.put("col", -2);
+			jointA1.add(0); jointA1.add(1); r1.put("row", 2.0); r1.put("col", -2.0);
 			rewards.put(jointA1, r1);
 
-			jointA2.add(1); jointA2.add(0); r2.put("row", 2); r2.put("col",-2);
+			jointA2.add(1); jointA2.add(0); r2.put("row", 2.0); r2.put("col",-2.0);
 			rewards.put(jointA2, r2);
 
-			jointA3.add(1); jointA3.add(1); r3.put("row", -2); r3.put("col", 2);
+			jointA3.add(1); jointA3.add(1); r3.put("row", -2.0); r3.put("col", 2.0);
 			rewards.put(jointA3, r3);
 			break;
 			
@@ -171,6 +171,11 @@ public class NFGReward implements Reward{
 	}
 	@Override
 	public Reward swapPlayers(int i, int j) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public int[] getNumActions() {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -75,6 +75,7 @@ public class TeamUP extends Agent {
 	int[][] c= new int [2][4];
 	int[] stateCount = new int [65];
 	private int numPlayers = 0;
+	private int[] oppNumActions;
 	
 	//private static final int T = 2; //how many time steps to stick to current strategy
 	/**
@@ -96,13 +97,28 @@ public class TeamUP extends Agent {
 		shapingOn = Boolean.valueOf(e.getAttribute("shaping"));
 		System.out.println("\t Q using shaping? " + shapingOn);
 		numPlayers = Integer.valueOf(e.getAttribute("players"));
+		oppNumActions = reward.getNumActions();
+		
 		
 		//initialize structures
 		initLog();
 		timeStep = 0;
 		opponents = new OpponentModel[numPlayers-1];
-		for (int i = 0; i < numPlayers-1; i++) {
-				opponents[i] = new OpponentModel(reward.getAgentsActions(),i);
+		
+		//create the opponent models with correct action number and their id tag
+		int a=0;
+		for (int j = 0; j < numPlayers; j++) {
+			if(j==agentId)
+				a--;
+			else{
+				opponents[a] = new OpponentModel(oppNumActions[j],j);
+			}
+			a++;
+		}
+		
+		
+		for (int i = 0; i < numPlayers; i++) {
+				
 		}
 		stratDomain = new LeaderFollowerDomain(opponents);
 		StrategyState s0 = new StrategyState();
@@ -180,7 +196,7 @@ public class TeamUP extends Agent {
 		 * @param i
 		 * @return
 		 */
-		public int follow(int i){
+		public Object follow(int i){
 			Vector<Object> jointAct = new Vector<Object>();
 			
 			//create a joint action to play with
@@ -197,18 +213,43 @@ public class TeamUP extends Agent {
 			}
 			
 			//get BR
-			double max = Double.POSITIVE_INFINITY;
+			double max = Double.NEGATIVE_INFINITY;
+			double maxOpp = Double.NEGATIVE_INFINITY;
+			Vector<Object> maxActions= null;
+			Vector<Vector<Object>> maxJointActions = null;
 			for (Object act : currentAction.getDomainSet()) {
 				jointAct.remove(agentId);
 				jointAct.add(agentId, act);
 				double[]r=reward.getRewards(jointAct);
-				if()
+				if(r[agentId] > max){
+					maxActions.clear(); maxActions.add(act);
+					maxJointActions.clear(); maxJointActions.add(jointAct);
+					max = r[agentId];
+					if(r[opponents[i].getId()] > maxOpp){//please opponent i
+						
+					}
+				}else if(r[agentId] == max){
+					maxActions.add(act);
+					maxJointActions.add(jointAct);
+				}
 			}
-			reward.getReward(, agentId);
-			int opp = ( (opponents[i].currentAction() + 6) % 12 );
-			if (opp == 12)
-				opp = 0;
-			return opp;
+			
+			//second criteria to choose a BR, there are two possibilities:
+			//1) 'please' agent i <-- THIS IS THE ONE USED FOR NOW
+			//2) make the 3rd guy (possibly the sucker) indifferent
+			double maxOpp = Double.NEGATIVE_INFINITY;
+			int k = 0;
+			Vector<Object> maxActions2= null;
+			for (Vector<Object> joint : maxJointActions) {
+				double[]r=reward.getRewards(joint);
+				if(r[opponents[i].getId()] > maxOpp){
+					maxActions2.clear(); maxActions2.add(act);
+					maxOpp = r[opponents[i].getId()];
+				}
+				k++;
+			}
+
+			return maxAction;
 		}
 	  public void ValueIteration(){
 		  final double EPSILON = 0.01; 

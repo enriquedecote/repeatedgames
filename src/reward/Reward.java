@@ -47,5 +47,7 @@ public interface Reward {
  public boolean isSymmetric();
  
  public Reward swapPlayers(int i, int j);
+ 
+ public int[] getNumActions();
 
 }
