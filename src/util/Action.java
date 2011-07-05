@@ -61,7 +61,7 @@ public abstract class Action {
 	}
 	// returns int id of the owner of the action 
 	public int getOwnerId (){
-		return owner;
+		return agentId;
 	}
 
 	/* returns a set of actions

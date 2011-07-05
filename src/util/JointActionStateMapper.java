@@ -36,12 +36,11 @@ public class JointActionStateMapper extends StateMapper<JointActionState> {
 	public void init(ObservableEnvInfo info){
 		NFGInfo state = (NFGInfo) info;
 		Vector<Action> vectA = state.currentJointAction();
-
+		Vector<Action> vectB = new Vector();
 		Action a0 = vectA.get(0).newInstance();
 		Action a1 = vectA.get(1).newInstance();
-		vectA.clear();
-		vectA.add(a0); vectA.add(a1);
-		stateDomain = new JointActionStateDomain(vectA);
+		vectB.add(a0); vectB.add(a1);
+		stateDomain = new JointActionStateDomain(state.currentJointAction());
 
 		for (JointActionState st : stateDomain.getStateSet()) {
 			mapping.put(st.getFeatures(),st);

@@ -193,7 +193,7 @@ public class ExperimentLogger {
 	    }
 	}
 	
-	public void recordUtils(int[] utils, int iter){
+	public void recordUtils(double[] utils, int iter){
 		int i = 0;
 		//content.setLength(0);
 		for (i=0;i<utils.length;i++) {
@@ -218,13 +218,13 @@ public class ExperimentLogger {
 		*/
 	}
 	
-	public void recordMean(int[] utils, int iter){
+	public void recordMean(double[] utils, int iter){
 		content.append("Total utility: ");
 		int i = 0;
 		//content.setLength(0);
 		for (i=0;i<utils.length;i++) {
-			Integer n = utils[i];
-			Double util = n.doubleValue()/iter;
+			double n = utils[i];
+			Double util = n/iter;
 			content.append(util.toString() + "\t");
 			//content.append("\t" + stateCount[i] + ret);
 		}

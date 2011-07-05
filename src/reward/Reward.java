@@ -42,6 +42,8 @@ public interface Reward {
  
  public double[] getRewards(ObservableEnvInfo s, Vector<Action> actions);
  
+ public double[] getRewards(Vector<Object> actions);
+ 
  public boolean isSymmetric();
  
  public Reward swapPlayers(int i, int j);

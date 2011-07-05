@@ -21,6 +21,7 @@ package reward;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Vector;
 
@@ -41,13 +42,15 @@ public class GamutReward implements Reward{
 	 */
 	Map<Integer, Map<Integer,Double>> rewards;
 	private int numAgents = 0;
-	private int[] agentsActions = new int[numAgents];
+	private int numStates = 0;
+	private int[] agentsActions;
 	private String path = System.getProperty("user.home")+"/experiments/repeatedgames/gamutGames/";
 
 	
 	// generates the reward function
-	public void Init (String game) {
+	public void Init (String gameName) {
 	   try{
+		   String game = buildGame(gameName);
 		// command line parameter
 		  FileInputStream fstream = new FileInputStream(game);
 		  // Get the object of DataInputStream
@@ -56,23 +59,23 @@ public class GamutReward implements Reward{
 		  
 		  String strLine;
 		  numAgents = Integer.valueOf(br.readLine());
+		  agentsActions = new int[numAgents];
 		  strLine = br.readLine();
 		  String[] actions = strLine.split(" "); //second line is the num of actions for each agent
 		  int numberOfOutcomes = 1;
 		  for (int i = 0; i < actions.length; i++){
-			  agentsActions[i] = Integer.getInteger(actions[i]);
+			  agentsActions[i] = Integer.valueOf(actions[i]);
 			  numberOfOutcomes *= agentsActions[i];
 		  }
+		  numStates=numberOfOutcomes;
+		  buildStructs();
 		  strLine = br.readLine();//third line is empty
 		  //Read File Line By Line
 		  Integer agent = 0;
 		  while ((strLine = br.readLine()) != null)   {
 			  String[] r = strLine.split(" ");
-			  for (int i = 0; i < numberOfOutcomes; i++) {
-				  Map<Integer,Double> rew = new HashMap<Integer, Double>();
-				  rew.put(agent, Double.valueOf(r[i]));
-				  rewards.put(i, rew);
-			  }
+			  for (int i = 0; i < numberOfOutcomes; i++) 
+				  rewards.get(i).put(agent, Double.valueOf(r[i]));
 			  agent++;  
 		  }
 		  
@@ -95,9 +98,23 @@ public class GamutReward implements Reward{
 	}
 	
 	@Override
-	public double[] getRewards(ObservableEnvInfo s, Vector<Action> jointAction){
-		return null;
-
+	public double[] getRewards(ObservableEnvInfo state, Vector<Action> jointAction){
+		int s = toState(toFeatures(jointAction));
+		double[] r = new double[numAgents];
+		for (int i = 0; i < r.length; i++)
+			r[i] = rewards.get(s).get(i);
+		
+		return r;
+	}
+	
+	@Override
+	public double[] getRewards(Vector<Object> jointAction){
+		int s = toState(toFeatures(jointAction));
+		double[] r = new double[numAgents];
+		for (int i = 0; i < r.length; i++)
+			r[i] = rewards.get(s).get(i);
+		
+		return r;
 	}
 	
 	private Vector<Object> toFeatures(Vector<Action> jointAction){
@@ -135,35 +152,55 @@ public class GamutReward implements Reward{
 	       return strat;
 	}
 	
-
 	private int toState(Vector a) throws NumberFormatException {
-		String actions = a.toString();
+		Object[] actions = a.toArray();
 		// Initialize result to 0
 		int res = 0;
 		// Do not continue on an empty string
-		if (actions.isEmpty()) {
+		if (actions.length==0) {
 			throw new NumberFormatException("Empty string is not an octal number");
 		}
 		// Consider each digit in the string
-		for (int i = 0; i < actions.length(); i++) {
+		for (int i = 0; i < actions.length; i++) {
 			// Get the nth char from the right (first = 0)
-			char n = actions.charAt(actions.length() - (i+1));
-			int f = (int) n - 48;
+			int n = (Integer)actions[i];
 			// Check if it's a valid bit
-			if (f < 0 || f > agentsActions[i]) {
+			if (n < 0 || n > agentsActions[i]) {
 				// And if not, die horribly
-				throw new NumberFormatException("Not an octal number");
+				throw new NumberFormatException("Not a valid number");
 			} else {
 			// Only add the value if it's a 1
-				res += f*Math.round(Math.pow(2.0, (numAgents*i)));
+				res += n*Math.round(Math.pow(2.0, i));
 			}
 		}
+		if(res > numStates)
+			System.err.println("error!!");
 		return res;
 	}
 	
 	private String buildGame(String game){
-		String cmd = path + "java -jar gamut.jar -g "+game+
-    	Process p = Runtime.getRuntime().exec(cmd);
+		try {
+			String cmd ="java -jar "+path+"gamut.jar -g "+game+ " -random_seed 1 -normalize -min_payoff 0 -max_payoff 5 -f "+
+			path+game+".GT -players 3 -function_X 3 -function_Y 1 -function_Z 2 -output GTOutput";
+	    	Process p = Runtime.getRuntime().exec(cmd);
+	    	return path+game+".GT";
+		}
+        catch (IOException e) {
+            System.out.println("exception happened - here's what I know: ");
+            e.printStackTrace();
+            return null;
+        }
+	}
+	
+	private void buildStructs(){
+		rewards = new HashMap<Integer, Map<Integer,Double>>();
+		for (int i = 0; i < numStates; i++) {
+			Map<Integer,Double> rew = new HashMap<Integer, Double>();
+			for (int a = 0; a < numAgents; a++) {
+				rew.put(a, 0.0);
+			}
+			rewards.put(i, rew);
+		}
 	}
 
 }

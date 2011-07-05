@@ -120,8 +120,9 @@ public class QLearningAgent extends Agent {
 			}
 			Vector<Action> currJointAct =  stateMapper.getActions(curr);
 			Vector<Object> currO = new Vector<Object>();
-			for (Action act : currJointAct) 
+			for (Action act : currJointAct) {
 				currO.add(act.getCurrentState());
+			}
 	
 			double currReward = reward.getReward(curr, currO, agentId);
 			Map<Object, Double> mapQ = Q.get(prevState);

@@ -39,27 +39,31 @@ import agent.QLearningAgent;
 public class JointActionStateDomain extends StateDomain<JointActionState> {
 	
 	private Map<Vector<Object>,JointActionState> mapping;
+	private int numAgents = 0;
+	private int numStates = 0;
+	private int[] agentsActions;
 	
 	/**
-	 * Only works for 2 agents
 	 * @param actions
 	 */
 	public JointActionStateDomain (Vector<Action> actions){
 		domain = new LinkedHashSet<JointActionState>();
 		mapping = new HashMap<Vector<Object>, JointActionState>();
-		Vector<Object> vectO;
+		numAgents = actions.size();
+		agentsActions = new int[numAgents];
+		int numberOfOutcomes = 1;
+		  for (int i = 0; i < numAgents; i++){
+			  agentsActions[i] = actions.get(i).getDomainSet().size();
+			  numberOfOutcomes *= agentsActions[i];
+		  }
+		  numStates = numberOfOutcomes;
 		
-		for(Object o0 : actions.get(0).getDomainSet()){
-			for(Object o1: actions.get(1).getDomainSet()){
-				//vectA = new Vector<Action>();
-				//vectO = new Vector<Object>();
-				//vectA.add(o0); vectA.add(o1);
-				//vectO.add(o0); vectO.add(o1);
-				JointActionState state = new JointActionState();
-				state.addFeature(o0); state.addFeature(o1);
-				//mapping.put(vectO, state);
-				domain.add(state);
-			}
+		for (int i = 0; i < numberOfOutcomes; i++) {
+			JointActionState state = new JointActionState();
+			int[] jointAct = toActions(i);
+			for (int j = 0; j < jointAct.length; j++) 
+				state.addFeature(jointAct[j]);
+			domain.add(state);
 		}
 	}
 	
@@ -95,6 +99,22 @@ public class JointActionStateDomain extends StateDomain<JointActionState> {
 			System.err.println("the state info is not of type NFGInfo, JointActionStateDomain cannot handdle this info type");
 			return null;
 		}
+	}
+	
+	/**
+	 * @param n the state (joint action)
+	 * @return the vector of actions
+	 */
+	private int[] toActions(int n){
+		int[] strat = new int[numAgents];
+	       int i=0;
+	       while (n > 0) {
+	          strat[i] = n % agentsActions[i];
+	          n = n/agentsActions[i];
+	          i++;
+	       }
+	       assert(strat.length == numAgents);
+	       return strat;
 	}
 	
 }

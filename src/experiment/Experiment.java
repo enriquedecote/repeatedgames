@@ -122,10 +122,10 @@ public class Experiment {
 		log.flushtoConfigFile();
 }
 	
-	public static int[] manyIterations(Vector<Agent> agents, Environment env, int iterations) {
+	public static double[] manyIterations(Vector<Agent> agents, Environment env, int iterations) {
 		
-		int[] totUtil = new int[2]; 
-		int[] runUtil = new int[2];
+		double[] totUtil = new double[agents.size()]; 
+		double[] runUtil = new double[agents.size()];
 		int totIterations = iterations;
 		while (iterations>0){
 			iterations = iterations - 1;
@@ -139,7 +139,7 @@ public class Experiment {
 		return totUtil;
 	}
 	  
-	public static int[] oneIteration(Vector<Agent> agents, Environment env){
+	public static double[] oneIteration(Vector<Agent> agents, Environment env){
 		Vector<Action> jointAction = new Vector<Action>(agents.size());
 		Vector<Object> jointActionString = new Vector<Object>(agents.size());
 
@@ -151,7 +151,7 @@ public class Experiment {
 
 		// 2) get environmental change (foe state perceptions for agents)
 		currentState = env.nextEnvInfo(jointAction);
-		int[] instReward = rewards.getRewards(currentState,jointAction);
+		double[] instReward = rewards.getRewards(currentState,jointAction);
 		log.recordActions(jointActionString);
 		//System.out.println("State:"+jointActionString);
 		// 3) update agents

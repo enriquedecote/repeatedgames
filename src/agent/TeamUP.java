@@ -102,7 +102,7 @@ public class TeamUP extends Agent {
 		timeStep = 0;
 		opponents = new OpponentModel[numPlayers-1];
 		for (int i = 0; i < numPlayers-1; i++) {
-				opponents[i] = new OpponentModel(12,i);
+				opponents[i] = new OpponentModel(reward.getAgentsActions(),i);
 		}
 		stratDomain = new LeaderFollowerDomain(opponents);
 		StrategyState s0 = new StrategyState();
@@ -169,12 +169,42 @@ public class TeamUP extends Agent {
 	  
 	  public void computeAction(Strategy strategy){
 		if(strategy.getName() == "F2")
-			currentAction.changeToState(opposite(0));
+			currentAction.changeToState(follow(0));
 		else if (strategy.getName() == "F3")
-			currentAction.changeToState(opposite(1));
+			currentAction.changeToState(follow(1));
 	  }
 	  
-		public int opposite(int i){
+		/**
+		 * follow agent i means BR to strategy i AND
+		 * make agent j indifferent
+		 * @param i
+		 * @return
+		 */
+		public int follow(int i){
+			Vector<Object> jointAct = new Vector<Object>();
+			
+			//create a joint action to play with
+			int a=0;
+			for (int j = 0; j < numPlayers; j++) {
+				if(j==agentId){
+					jointAct.add(-1);
+					a--;
+				}
+				else{
+					jointAct.add(opponents[a].currentAction());
+				}
+				a++;
+			}
+			
+			//get BR
+			double max = Double.POSITIVE_INFINITY;
+			for (Object act : currentAction.getDomainSet()) {
+				jointAct.remove(agentId);
+				jointAct.add(agentId, act);
+				double[]r=reward.getRewards(jointAct);
+				if()
+			}
+			reward.getReward(, agentId);
 			int opp = ( (opponents[i].currentAction() + 6) % 12 );
 			if (opp == 12)
 				opp = 0;
@@ -369,72 +399,6 @@ public class TeamUP extends Agent {
 		}
 		return false;
 		
-	}
-	
-	/**
-	 * computes the followIndex of a given sequence
-	 * @param opponentSeq the sequence to compare to
-	 * @return the normalized followIndex of the its sequence and the argument's sequence
-	 * @TODO: work out the co-domain (range) of the function 
-	 */
-	public double followIndex(Vector<Integer> mySeq, Vector<Integer> otherSeq){
-		double fIndex = 0;
-		double sumG = 0;
-		double dif;
-		double dif1;
-		double dif2;
-		double norm;
-		int t = 0;
-		assert(this.sequence.size() == mySeq.size() && this.sequence.size() == otherSeq.size());
-		for (int i = 0; i < sequence.size(); i++) 
-			sumG += Math.pow(GAMMA, i);
-		
-		for(int i = sequence.size()-1; i >0 ; i--) {
-			dif1 = Math.abs((sequence.get(i) -  mySeq.get(i-1) + 6) % 12);
-			if(dif1 > 6)
-				dif1 = 12 - dif1;
-			dif2 = Math.abs((sequence.get(i) - otherSeq.get(i-1) + 6) % 12);
-			if(dif2 > 6)
-				dif2 = 12 - dif2;
-			dif = Math.min(dif1, dif2);
-			//if(t==0) System.out.print(dif+": ");
-			dif = Math.pow(dif, RHO);
-			norm = Math.pow(GAMMA, t) / sumG;
-			fIndex += norm * dif;
-			t++;
-		}
-		//System.out.println(fIndex);
-		return fIndex;
-	}
-	
-	/**
-	 * computes the followIndex of a given sequence for a given opponent
-	 * @param opponentSeq the sequence to compare to
-	 * @return the normalized followIndex of the its sequence and the argument's sequence
-	 * @TODO: work out the co-domain (range) of the function 
-	 */
-	public double followIndex(Vector<Integer> otherSeq){
-		double fIndex = 0;
-		double sumG = 0;
-		double dif;
-		double norm;
-		int t = 0;
-		assert(this.sequence.size() ==  otherSeq.size());
-		for (int i = 0; i < sequence.size(); i++) 
-			sumG += Math.pow(GAMMA, i);
-		
-		for(int i = sequence.size()-1; i >0 ; i--) {
-			dif = Math.abs((sequence.get(i) - otherSeq.get(i-1) + 6) % 12);
-			if(dif > 6)
-				dif = 12 - dif;
-			//if(t==0) System.out.print(dif+": ");
-			dif = Math.pow(dif, RHO);
-			norm = Math.pow(GAMMA, t) / sumG;
-			fIndex += norm * dif;
-			t++;
-		}
-		//System.out.println(fIndex);
-		return fIndex;
 	}
 	
 	private void initLog(){

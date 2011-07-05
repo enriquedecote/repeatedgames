@@ -27,7 +27,7 @@ import java.util.Vector;
  */
 public class NFGInfo implements ObservableEnvInfo {
 	protected Object[] jointO;
-	protected Vector<Action> jointAction = new Vector();
+	private Vector<Action> jointAction = new Vector();
 	
 	public NFGInfo(){
 	}
@@ -37,7 +37,7 @@ public class NFGInfo implements ObservableEnvInfo {
 	}
 	
 	public Vector<Action> currentJointAction(){
-
+		
 		for (int i = 0; i < jointO.length; i++) {
 			jointAction.get(i).changeToState(jointO[i]);
 		}
@@ -56,7 +56,7 @@ public class NFGInfo implements ObservableEnvInfo {
 		
 		for (int i = 0; i < j.size(); i++) {
 			jointO[i] = j.get(i).getCurrentState();
-			jointAction.add(j.get(i));
+			jointAction.add(j.get(i).newInstance());
 		}
 	}
 }

@@ -39,7 +39,7 @@ public class NFGReward implements Reward{
 	 * the first Vector of string is a vector of actions (as strings), the second String is the id of the agent, 
 	 * the int is the reward
 	 */
-	Map<Vector<Integer>, Map<String,Integer>> rewards;
+	Map<Vector<Integer>, Map<String,double>> rewards;
 	Vector<Integer> jointA = new Vector<Integer>(2);
 	Vector<Integer> jointA1 = new Vector<Integer>(2);
 	Vector<Integer> jointA2 = new Vector<Integer>(2);
@@ -55,7 +55,7 @@ public class NFGReward implements Reward{
 	}
 
 	public NFGReward () {
-		rewards = new HashMap<Vector<Integer>, Map<String,Integer>>();
+		rewards = new HashMap<Vector<Integer>, Map<String,double>>();
 	}
 	// generates the reward function
 	public void Init (String game) {
@@ -127,14 +127,14 @@ public class NFGReward implements Reward{
 	
 	}
 	
-	public int getReward(ObservableEnvInfo s, Vector<Object> jointAction, int agent){
+	public double getReward(ObservableEnvInfo s, Vector<Object> jointAction, int agent){
 		if(agent == 0)
 			return rewards.get(jointAction).get("row"); 
 		else
 			return rewards.get(jointAction).get("col");
 	}
 	
-	public int getReward(Vector<Object> jointAction, int agent){
+	public double getReward(Vector<Object> jointAction, int agent){
 		if(agent == 0)
 			return rewards.get(jointAction).get("row"); 
 		else
@@ -142,9 +142,9 @@ public class NFGReward implements Reward{
 	}
 	
 	@Override
-	public int[] getRewards(ObservableEnvInfo s, Vector<Action> jointAction){
+	public double[] getRewards(ObservableEnvInfo s, Vector<Action> jointAction){
 		Vector<Object> feat = toFeatures(jointAction);
-		int[] rwds =  new int[2];
+		double[] rwds =  new double[2];
 		rwds[0] = rewards.get(toFeatures(jointAction)).get("row");
 		rwds[1] = rewards.get(toFeatures(jointAction)).get("col");
 		return rwds;
@@ -163,6 +163,16 @@ public class NFGReward implements Reward{
 	public boolean isSymmetric() {
 		// TODO Auto-generated method stub
 		return false;
+	}
+	@Override
+	public double[] getRewards(Vector<Object> actions) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	@Override
+	public Reward swapPlayers(int i, int j) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 

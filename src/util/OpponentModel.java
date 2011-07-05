@@ -30,12 +30,12 @@ public class OpponentModel {
 		private int strat[];
 		private int id;
 		private Vector<Integer> sequence = new  Vector<Integer>();
-		private Deque<Integer> pastActions;
+		private Deque<Integer> pastActions; // this player's actions done in the past, with a window of size CAPACITY
 		private static final int CAPACITY = 10;
 		private static final double GAMMA = 0.05;
 		private static final double RHO = 0.5;
 		private static final double TRESHOLD = (Math.pow(6, RHO)/(1-GAMMA))*0.3; //this is 0.3 from max followIndex, anything bellow this is considered follower
-		private int myLastActions[];
+		private int myLastActions[]; // the leader (e.g. TeamUP) actions done in the past
 		
 		public OpponentModel(int actions, int id){
 			this.numActions = actions;
