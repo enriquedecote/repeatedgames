@@ -214,9 +214,8 @@ public class TeamUP extends Agent {
 			
 			//get BR
 			double max = Double.NEGATIVE_INFINITY;
-			double maxOpp = Double.NEGATIVE_INFINITY;
-			Vector<Object> maxActions= null;
-			Vector<Vector<Object>> maxJointActions = null;
+			Vector<Object> maxActions= new Vector<Object>();
+			Vector<Vector<Object>> maxJointActions = new Vector<Vector<Object>>();
 			for (Object act : currentAction.getDomainSet()) {
 				jointAct.remove(agentId);
 				jointAct.add(agentId, act);
@@ -225,9 +224,6 @@ public class TeamUP extends Agent {
 					maxActions.clear(); maxActions.add(act);
 					maxJointActions.clear(); maxJointActions.add(jointAct);
 					max = r[agentId];
-					if(r[opponents[i].getId()] > maxOpp){//please opponent i
-						
-					}
 				}else if(r[agentId] == max){
 					maxActions.add(act);
 					maxJointActions.add(jointAct);
@@ -239,18 +235,19 @@ public class TeamUP extends Agent {
 			//2) make the 3rd guy (possibly the sucker) indifferent
 			double maxOpp = Double.NEGATIVE_INFINITY;
 			int k = 0;
-			Vector<Object> maxActions2= null;
+			Object maxAction= null;
 			for (Vector<Object> joint : maxJointActions) {
 				double[]r=reward.getRewards(joint);
 				if(r[opponents[i].getId()] > maxOpp){
-					maxActions2.clear(); maxActions2.add(act);
+					maxAction = joint.get(agentId);
 					maxOpp = r[opponents[i].getId()];
 				}
 				k++;
 			}
-
+			assert(maxActions.contains(maxAction));
 			return maxAction;
 		}
+		
 	  public void ValueIteration(){
 		  final double EPSILON = 0.01; 
 		  final double GAMMA = 0.5;

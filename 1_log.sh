@@ -1,8 +1,8 @@
 #!/bin/bash
 # $1 is the xml file experiment (must be without extension)
 # $2 is the number of steps in the numerical series
-# $3 is the first column to analize: 0,1 (actions), 2,3 (rewards)
-# $4 is the first column to analize: 0,1 (actions), 2,3 (rewards)
+# $3 is the first column to analize: 0,1, ..., n (actions), 2,3 (rewards)
+# $4 is the last column to analize: 0,1 (actions), 2,3 (rewards)
 # $5 is the experiment number
 
 EXEC=~/experiments/repeatedgames/tmp

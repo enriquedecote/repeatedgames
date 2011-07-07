@@ -27,18 +27,18 @@
 <Players><Player>
 	<TeamUP epsilon="0.1" epsilonDecay="POLY"
 		gamma="0.05" rho="0.5" k="15" shaping="true" policy="EGREEDY" name="TeamUP" actionType="NINTACTIONS" numActions="2" stateType="JOINTACTIONS"
-		 players="3" oppNumActions"2,2">
+		 players="3">
 	</TeamUP></Player>
   <Player>
 	<q-learning epsilon="0.1" epsilonDecay="POLY" alpha="0.3"
 		alphaDecay="_" gamma="0.95" policy="EGREEDY" name="q-learning" actionType="NINTACTIONS" numActions="2" stateType="JOINTACTIONS" Qinit="0">
 	</q-learning></Player>
   <Player>
-	<q-learning epsilon="0.1" epsilonDecay="POLY" alpha="0.3"
+	<q-learning epsilon="0.1" epsilonDecay="POLY" alpha="0.1"
 		alphaDecay="_" gamma="0.95" policy="EGREEDY" name="q-learning" actionType="NINTACTIONS" numActions="2" stateType="JOINTACTIONS" Qinit="0">
 	</q-learning></Player>
 </Players>
 </Environment>
-<Experiment iterations="1000" runs="2">
+<Experiment iterations="30000" runs="10">
 </Experiment>
 </Test>
