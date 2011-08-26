@@ -34,20 +34,20 @@ import agent.QLearningAgent;
  * subclass of generic type statedomain, can be implemented. It implements all the possible lemonade states
  */
 
-public class LemonadeStateDomain extends StateDomain<JointActionState> {  
-	protected Set<JointActionState> states;
+public class StateDomain_Lemonade extends StateDomain<State_JointAction> {  
+	protected Set<State_JointAction> states;
 	
 	// creates the domain
 	public void Init (){
 		int player =5;
 		Vector<Agent> agentSet = new Vector <Agent>();
-		states = new LinkedHashSet <JointActionState>();
+		states = new LinkedHashSet <State_JointAction>();
 		Map <Agent , Action> newState;
 		newState = new HashMap <Agent, Action>();
-		Action One = new EnumActions (1);
-		Action Two = new EnumActions (2); Action Three = new EnumActions (3);Action Four = new EnumActions (4); Action Five = new EnumActions (5);
-		Action Six = new EnumActions (6); Action Seven = new EnumActions (7); Action Eight = new EnumActions (8); Action Nine = new EnumActions (9); Action Ten = new EnumActions (10);
-		Action Eleven = new EnumActions (11); Action Twelve = new EnumActions (12);
+		Action One = new Action_Enum (1);
+		Action Two = new Action_Enum (2); Action Three = new Action_Enum (3);Action Four = new Action_Enum (4); Action Five = new Action_Enum (5);
+		Action Six = new Action_Enum (6); Action Seven = new Action_Enum (7); Action Eight = new Action_Enum (8); Action Nine = new Action_Enum (9); Action Ten = new Action_Enum (10);
+		Action Eleven = new Action_Enum (11); Action Twelve = new Action_Enum (12);
 		for (int i=0; i<player; i++){
 			Agent agent = new QLearningAgent();
 			agentSet.add(agent);
@@ -66,7 +66,7 @@ public class LemonadeStateDomain extends StateDomain<JointActionState> {
 												for (Action Eleven11 : Eleven.actionsSet()){
 													for (Action Twelve12 : Twelve.actionsSet()){
 												
-														JointActionState NewState = new JointActionState ();
+														State_JointAction NewState = new State_JointAction ();
 															if (One1.getName()!= "One" && Two2.getName()!= "Two" && Three3.getName() != "Three" && Four4.getName()!= "Four" && Five5.getName() != "Five" && Six6.getName()!= "Six" && Seven7.getName() != "Seven" && Eight8.getName()!= "Eight" && Three3.getName() != "Three" && Two2.getName()!= "Two" && Nine.getName() != "Nine" && Ten10.getName()!= "Ten" && Eleven11.getName() != "Eleven" && Twelve12.getName()!= "Twelve"){
 																newState.put(agentSet.get(player), One1);newState.put(agentSet.get(player), Two2);newState.put(agentSet.get(player), Three3);newState.put(agentSet.get(player), Four4);newState.put(agentSet.get(player), Five5);newState.put(agentSet.get(player), Six6);newState.put(agentSet.get(player), Seven7);newState.put(agentSet.get(player), Eight8);newState.put(agentSet.get(player), Nine9);newState.put(agentSet.get(player), Ten10);newState.put(agentSet.get(player), Eleven11);newState.put(agentSet.get(player), Twelve12);
 																
@@ -90,12 +90,12 @@ public class LemonadeStateDomain extends StateDomain<JointActionState> {
 	}
 	
 	// adds state to the domain
-	public void add (JointActionState state){
+	public void add (State_JointAction state){
 		states.add(state);
 	}
 	
 	// to get lemonade state domain
-	public Set<JointActionState >  getStateDomain(){
+	public Set<State_JointAction >  getStateDomain(){
 		return states;
 		}
 	

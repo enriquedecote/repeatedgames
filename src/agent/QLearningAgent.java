@@ -39,9 +39,9 @@ import agent.Agent.Policy;
 import reward.Reward;
 
 import util.Action;
-import util.JointActionState;
-import util.JointActionStateDomain;
-import util.JointActionStateMapper;
+import util.State_JointAction;
+import util.StateDomain_JointAction;
+import util.StateMapper_JointAction;
 import util.NFGInfo;
 import util.ObservableEnvInfo;
 import util.State;

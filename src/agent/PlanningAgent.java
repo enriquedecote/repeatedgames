@@ -35,8 +35,8 @@ import util.StrategyState;
 
 import util.Action;
 import util.ActionDomain;
-import util.GridActionDomain;
-import util.JointActionState;
+import util.ActionDomain_Grid;
+import util.State_JointAction;
 import util.ObservableEnvInfo;
 import util.State;
 import util.StateDomain;

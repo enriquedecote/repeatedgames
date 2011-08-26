@@ -36,20 +36,20 @@ import agent.QLearningAgent;
  *subclass of  generic type statedomain, can be implemented. It holds all the generic fields and methods common it its subclasses 
  *it creates the grid domain 
  */
-public class SingleStateDomain extends StateDomain<JointActionState> {
-	JointActionState dummyState;
-	private Map<Vector<Object>,JointActionState> mapping;
+public class StateDomain_Single extends StateDomain<State_JointAction> {
+	State_JointAction dummyState;
+	private Map<Vector<Object>,State_JointAction> mapping;
 	
 	/**
 	 * Only works for 2 agents
 	 * @param actions
 	 */
-	public SingleStateDomain (){
-		domain = new LinkedHashSet<JointActionState>();
-		mapping = new HashMap<Vector<Object>, JointActionState>();
+	public StateDomain_Single (){
+		domain = new LinkedHashSet<State_JointAction>();
+		mapping = new HashMap<Vector<Object>, State_JointAction>();
 		Vector<Object> vectO;
 
-				dummyState = new JointActionState();
+				dummyState = new State_JointAction();
 				domain.add(dummyState);
 
 	}
@@ -57,7 +57,7 @@ public class SingleStateDomain extends StateDomain<JointActionState> {
 
 	
 // get state domain		
-	public Set<JointActionState> getStateSet(){
+	public Set<State_JointAction> getStateSet(){
 		return domain;	
 	}	
 // returns size of the domain	
@@ -70,7 +70,7 @@ public class SingleStateDomain extends StateDomain<JointActionState> {
 	 * @param info the info coming from the environment
 	 * @return
 	 */
-	public JointActionState getState(ObservableEnvInfo e){	
+	public State_JointAction getState(ObservableEnvInfo e){	
 			return dummyState;
 
 

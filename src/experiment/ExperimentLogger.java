@@ -34,8 +34,8 @@ import reward.Reward;
 import agent.Agent;
 
 import util.Action;
-import util.JointActionState;
-import util.JointActionStateDomain;
+import util.State_JointAction;
+import util.StateDomain_JointAction;
 import util.State;
 
 /**

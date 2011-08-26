@@ -19,29 +19,46 @@
  ******************************************************************************/
 package util;
 
-
-import java.util.Vector;
-/**
- * @author aladdinagentschool
- *This is a subclass of ActionDomain, this class can be implemented. it creates a domain of all possible enum actions
- * 
+/*
+ *  the types of enum actions required in the lemonade game 
+ *  this class extends from generic type action
  */
-public class EnumActionDomain extends ActionDomain {
-	//constructor
-	public EnumActionDomain(){
-		Action One = new EnumActions (1);
-		Action Two = new EnumActions (2);
-		Action Three = new EnumActions (3);
-		Action Four = new EnumActions (4);
-		Action Five = new EnumActions (5);
-		Action Six = new EnumActions (6);
-		Action Seven = new EnumActions (7);
-		Action Eight = new EnumActions (8);
-		Action Nine = new EnumActions (9);
-		Action Ten = new EnumActions (10);
-		Action Eleven = new EnumActions (11);
-		Action Twelve = new EnumActions (12);
-		actionSet = new Vector<Action>();
+
+public class Action_Enum extends Action{
+	public static Action_Enum One = new Action_Enum (1);
+	public static Action_Enum Two = new Action_Enum (2);
+	public static Action_Enum Three = new Action_Enum (3);
+	public static Action_Enum Four = new Action_Enum (4);
+	public static Action_Enum Five = new Action_Enum (5);
+	public static Action_Enum Six = new Action_Enum (6);
+	public static Action_Enum Seven = new Action_Enum (7);
+	public static Action_Enum Eight = new Action_Enum (8);
+	public static Action_Enum Nine = new Action_Enum (9);
+	public static Action_Enum Ten = new Action_Enum (10);
+	public static Action_Enum Eleven = new Action_Enum (11);
+	public static Action_Enum Twelve = new Action_Enum (12);
+	
+	// constructors
+	public Action_Enum (int Name){
+		super ();
+		actionSet.add(One);
+		actionSet.add(Two);
+		actionSet.add(Three);
+		actionSet.add(Four);
+		actionSet.add(Five);
+		actionSet.add(Six);
+		actionSet.add(Seven);
+		actionSet.add(Eight);
+		actionSet.add(Nine);
+		actionSet.add(Ten);
+		actionSet.add(Eleven);
+		actionSet.add(Twelve);
+	}
+
+
+	// constructors
+	public Action_Enum (){
+		super ();
 		actionSet.add(One);
 		actionSet.add(Two);
 		actionSet.add(Three);

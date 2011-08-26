@@ -112,7 +112,7 @@ public class CoordinateState<E> extends State<E, Map<E,Vector<Integer>>>{
 	 * @param s is the state of the game
 	 * @return next state as a Coordinate state
 	 */
-	public CoordinateState getNextState (JointActionState actionState, State s ){
+	public CoordinateState getNextState (State_JointAction actionState, State s ){
 		//public CoordinateState getNextState (Action actionState, State s ){
 		CoordinateState state = (CoordinateState) s;
 	 

@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Vector;
 
 import util.Action;
-import util.JointActionState;
+import util.State_JointAction;
 import util.NFGInfo;
 import util.ObservableEnvInfo;
 import util.State;

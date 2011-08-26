@@ -19,15 +19,45 @@
  ******************************************************************************/
 package util;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Vector;
+
 /**
- * @author aladdinagentschool
- * subclass od generic type action
- * not yet been inplemented
+ * @author Enrique Munoz de Cote
+ *
  */
-public class LeaderFollowerActions extends Action {
+public class StateMapper_Single extends StateMapper<State_JointAction> {
+	private State_JointAction state; //dummy state
 	
+	public StateMapper_Single(){
+	}
+	/**
+	 * Constructs state space and strategy
+	 * @param e
+	 */
+	public void init(ObservableEnvInfo info){
+		stateDomain = new StateDomain_Single();
+		state = stateDomain.getState(info);
+	}
 	
-	LeaderFollowerActions(){ 
-	super ();
+	public State_JointAction getState(NFGInfo info){
+		return state;
+	}
+	
+	@Override
+	public State_JointAction getState(ObservableEnvInfo info){
+		return state;
+	}
+	
+	@Override
+	public Vector<Action> getActions(ObservableEnvInfo info){
+		NFGInfo state = (NFGInfo) info;
+		return state.currentJointAction();
+	}
+	
+	@Override
+	public Vector<Object> getFeatures(ObservableEnvInfo info){
+		return getState(info).getFeatures();
 	}
 }

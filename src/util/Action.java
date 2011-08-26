@@ -46,13 +46,13 @@ public abstract class Action {
 	public Action(String actName) {
 		
 		if (actName== "GridActions"){
-			GridActions action = new GridActions();
+			Action_Grid action = new Action_Grid();
 		}else 
 		if (actName== "EnumActions"){
-			EnumActions action = new EnumActions();
+			Action_Enum action = new Action_Enum();
 		}else
 		if (actName== "LeaderFollowerActions"){
-			LeaderFollowerActions action = new LeaderFollowerActions();
+			Action_LeaderFollower action = new Action_LeaderFollower();
 		}else
 		if (actName== "TwoActions"){
 			TwoActions action = new TwoActions();
@@ -85,6 +85,10 @@ public abstract class Action {
 	
 	public Action newInstance(){
 		return null;
+	}
+
+	public String getName() {
+		return actionName;
 	}
 
 }

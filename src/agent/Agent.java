@@ -108,13 +108,13 @@ public abstract class Agent {
 		// visibility (state)
 		switch (StateType.valueOf(e.getAttribute("stateType"))) {
 		case JOINTACTIONS:
-			stateMapper = new JointActionStateMapper();
+			stateMapper = new StateMapper_JointAction();
 			//log.recordConfig("\t jointaction states");
 			System.out.println("\t jointaction states");
 			break;
 		
 		case _:
-			stateMapper = new SingleStateMapper();
+			stateMapper = new StateMapper_Single();
 			//log.recordConfig("\t Agent with no state info");
 			System.out.println("\t Agent with no state info");
 			break;
@@ -128,7 +128,7 @@ public abstract class Agent {
 			
 		case NINTACTIONS:	
 			int numberActions = Integer.valueOf(e.getAttribute("numActions"));
-			currentAction = new NintegerAction(numberActions, agentId);
+			currentAction = new Action_Ninteger(numberActions, agentId);
 			//log.recordConfig("\t actionType: " + numberActions + "-intActions");
 			System.out.println("\t actionType: " + numberActions + "-intActions");
 			break;

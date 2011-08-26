@@ -26,13 +26,13 @@ import java.util.Vector;
  * @author Enrique Munoz de Cote
  *
  */
-public class NintegerActionDomain extends ActionDomain {
+public class ActionDomain_Ninteger extends ActionDomain {
 	
 	/**
 	 * Generates a domain of size numberActions [0,numberActions-1]
 	 * @param numberActions the size of the domain
 	 */
-	public NintegerActionDomain(int numberActions){
+	public ActionDomain_Ninteger(int numberActions){
 		
 		actionSet = new Vector(numberActions);
 		for (int i = 0; i < numberActions; i++) {

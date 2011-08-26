@@ -29,7 +29,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import util.Action;
-import util.JointActionStateDomain;
+import util.StateDomain_JointAction;
 import util.State;
 import org.w3c.dom.Element;
 

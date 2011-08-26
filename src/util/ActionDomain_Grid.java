@@ -17,46 +17,32 @@
  * Contributors:
  *     Enrique Munoz de Cote - initial API and implementation
  ******************************************************************************/
-package environment;
+package util;
 
-import java.util.HashMap;
-import java.util.Map;
+
 import java.util.Vector;
 
-import agent.Agent;
 
-import util.Action;
-import util.State_JointAction;
-import util.ObservableEnvInfo;
-import util.State;
-import util.StateSet;
-
-
-
- /**
- * @author Enrique Munoz de Cote
- *
- * The environment has several attributes that can be perceived by an agent,
- * the specific attributes will be declared in the classes that implement this interface
- * @param <E>
- * @param <F>
- */
-public interface Environment<A> {
-	 /**
-	 *  Gives information about the environment given the actions that transform the env
-	 * @param actions
-	 * @return a map with the new env info
-	 */
-	public ObservableEnvInfo nextEnvInfo(Vector<A> actions);
-	/**
-	 * Gives information about the environment
-	 * @return
-	 */
-	public ObservableEnvInfo currentEnvInfo();
+/**
+* @author aladdinagentschool
+*This is a subclass of ActionDomain, this class can be implemented. it creates a domain of all possible gridactions
+* 
+*/
+public class ActionDomain_Grid extends ActionDomain {
+	public ActionDomain_Grid(){
+		Action right = new Action_Grid("right");
+		Action left = new Action_Grid("left");
+		Action up = new Action_Grid("up");
+		Action down = new Action_Grid("down");
+		Action put = new Action_Grid("put");
+		actionSet = new Vector<Action>();
+		actionSet.add(right);
+		actionSet.add(left);
+		actionSet.add(up);
+		actionSet.add(down);
+		actionSet.add(put);
 	
-	/**
-	 * Initializes the object with action information
-	 * @param actions
-	 */
-	public void Init(Vector<A> actions);
+		
+		
+	}
 }

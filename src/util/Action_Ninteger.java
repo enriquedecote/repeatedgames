@@ -17,13 +17,46 @@
  * Contributors:
  *     Enrique Munoz de Cote - initial API and implementation
  ******************************************************************************/
+/**
+ * 
+ */
 package util;
 
-public class JointActionDomain extends ActionDomain {
+import agent.Agent;
 
-	public JointActionDomain(){
-		
+/**
+ * @author Enrique Munoz de Cote
+ *
+ */
+public class Action_Ninteger extends Action {
+	//private NintegerActionDomain domain;
+	private int action;
+	private static int defAction = 0;
+	private int size;
+	
+	
+	public Action_Ninteger(String stringName, int domainRange){
+		actionName = stringName;
+		domain = new ActionDomain_Ninteger(domainRange);
+		size = domainRange;
+	}
+	public Action_Ninteger(int domainRange){
+		domain = new ActionDomain_Ninteger(domainRange);
+		action = defAction;
+		state = defAction;
+		size = domainRange;
+	}
+	
+	public Action_Ninteger(int domainRange, int id){
+		domain = new ActionDomain_Ninteger(domainRange);
+		action = defAction;
+		state = defAction;
+		size = domainRange;
+		agentId = id;
 	}
 	
 	
+	public Action_Ninteger newInstance(){
+		return new Action_Ninteger(size, agentId);
+	}
 }

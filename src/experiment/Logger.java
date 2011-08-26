@@ -32,8 +32,8 @@ import reward.Reward;
 import agent.Agent;
 
 import util.Action;
-import util.JointActionState;
-import util.JointActionStateDomain;
+import util.State_JointAction;
+import util.StateDomain_JointAction;
 import util.State;
 
 /**
@@ -46,11 +46,11 @@ public class Logger {
 	private File file;
 	private File tempFile;
 	StringBuffer content;
-	JointActionStateDomain sDomain;
+	StateDomain_JointAction sDomain;
 	private int[] stateCount;
 	private boolean log; 
 	
-	public Logger(JointActionStateDomain s, boolean loggerOn){
+	public Logger(StateDomain_JointAction s, boolean loggerOn){
 		log = loggerOn;
 		sDomain = s;
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMddHHmm");
@@ -111,7 +111,7 @@ public class Logger {
 		String ret =	System.getProperty("line.separator");
 		int i = 0;
 		content.setLength(0);
-		for (JointActionState state : sDomain.getStateSet()) {
+		for (State_JointAction state : sDomain.getStateSet()) {
 			content.append(state.toString() + ",");
 			content.append("\t" + stateCount[i] + ret);
 			i++;

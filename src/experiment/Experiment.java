@@ -46,8 +46,8 @@ import environment.Environment;
 
 import util.Action;
 import util.CoordinateState;
-import util.GridStateDomain;
-import util.JointActionState;
+import util.StateDomain_Grid;
+import util.State_JointAction;
 import util.ObservableEnvInfo;
 import util.State;
 import util.readxmlv2;

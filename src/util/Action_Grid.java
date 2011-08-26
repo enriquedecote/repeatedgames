@@ -24,16 +24,16 @@ package util;
 *This is a subclass of ActionDomain, this class can be implemented. // Class with the types of grid actions.
 * 
 */
-public class GridActions extends Action  {
+public class Action_Grid extends Action  {
 	
-	public static GridActions right = new GridActions ("right");
-	public static GridActions left = new GridActions ("left");
-	public static GridActions up = new GridActions ("up");
-	public static GridActions down = new GridActions ("down");
+	public static Action_Grid right = new Action_Grid ("right");
+	public static Action_Grid left = new Action_Grid ("left");
+	public static Action_Grid up = new Action_Grid ("up");
+	public static Action_Grid down = new Action_Grid ("down");
 	
 
 	// constructors
-	public GridActions (String Name){
+	public Action_Grid (String Name){
 		
 		actionName= Name;
 		actionSet.add(right);
@@ -44,7 +44,7 @@ public class GridActions extends Action  {
 	}
 
 	// constructors
-	public GridActions (){
+	public Action_Grid (){
 		//super();
 		actionSet.add(right);
 		actionSet.add(left);

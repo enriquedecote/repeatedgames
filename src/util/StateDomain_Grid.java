@@ -36,20 +36,20 @@ import agent.QLearningAgent;
  *subclass of  generic type statedomain, can be implemented. It holds all the generic fields and methods common it its subclasses 
  *it creates the grid domain 
  */
-public class GridStateDomain extends StateDomain {
+public class StateDomain_Grid extends StateDomain {
 	
 	
 	public static Vector<CoordinateState> domain = new Vector <CoordinateState>();
 	
 	
 	// constructor for the class
-	public GridStateDomain (int row, int column, int player){
+	public StateDomain_Grid (int row, int column, int player){
 		domain = new Vector <CoordinateState>();
 		init (row, column, player);
 	}
 	
 	// Override the constructor. It take in the xml file name and gets the values for the row, column and players itself.
-	public GridStateDomain (String filename) throws SAXException, IOException{
+	public StateDomain_Grid (String filename) throws SAXException, IOException{
 		util.readxmlv2.getData(filename);
 		int players = util.readxmlv2.getplayers();
 		int row = util.readxmlv2.getRows();
