@@ -22,10 +22,12 @@ package environment;
 import java.util.Vector;
 
 import util.Action_Grid;
+import util.NFGInfo;
 import util.ObservableEnvInfo;
 
 public class GridEnvironment implements Environment<Action_Grid> {
-
+	NFGInfo envInfo;
+	
 	public GridEnvironment() {
 		// TODO Auto-generated constructor stub
 	}
