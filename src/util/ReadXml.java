@@ -26,10 +26,6 @@ import environment.Environment;
 import experiment.ExperimentLogger;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Vector;
 // XML DOMparser
 import javax.xml.parsers.DocumentBuilder;
@@ -38,14 +34,12 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 //SpringBeans
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.xml.XmlBeanFactory;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
@@ -129,6 +123,7 @@ public class ReadXml {
 		String name = e.getAttribute("name");
 		System.out.println("Environment: " + name);
 		Environment env = (Environment)factory.getBean(name);
+		env.Init(e);
 		return env;
 	}
 	
@@ -137,11 +132,8 @@ public class ReadXml {
 	 * @return the created reward object
 	 */
 	public Reward constructReward(ExperimentLogger log){
-		NodeList nodes = docEle.getElementsByTagName("Environment");
-		Node type = nodes.item(0).getFirstChild();
-		type = type.getNextSibling();
-		NodeList list = type.getChildNodes();
-		Element e = (Element) list.item(1);
+		NodeList nodes = docEle.getElementsByTagName("Type");
+		Element e = (Element)nodes.item(0);
 		String name = e.getAttribute("type");
 		System.out.println("\nGame Type: " + name);
 		log.recordConfig("Game Type: " + name);
@@ -150,6 +142,7 @@ public class ReadXml {
 		System.out.println("Game: " + name);
 		log.recordConfig("Game: " + name);
 		r.Init(name);
+		r.Init(this);
 		return r;
 	}
 
@@ -189,6 +182,28 @@ public class ReadXml {
 		NodeList nodes = docEle.getElementsByTagName("Experiment");
 		Element e = (Element) nodes.item(0);
 		return e.getAttribute("runs");
+	}
+	
+	public static String getTextValue(Element ele, String tagName) {
+		String textVal = null;
+		NodeList nl = ele.getElementsByTagName(tagName);
+		if(nl != null && nl.getLength() > 0) {
+			Element el = (Element)nl.item(0);
+			textVal = el.getFirstChild().getNodeValue();
+		}
+		return textVal;
+	}
+	
+	private static int getIntValue(Element ele, String tagName) {
+		return Integer.parseInt(getTextValue(ele,tagName));
+	}
+	
+	public static float getFloatValue(Element ele, String tagName) {
+		return Float.parseFloat(getTextValue(ele,tagName));
+	}
+	
+	public NodeList getElementsByTagName(String s){
+		return docEle.getElementsByTagName(s);
 	}
 
 }

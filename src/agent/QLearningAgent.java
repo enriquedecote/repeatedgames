@@ -42,7 +42,7 @@ import util.Action;
 import util.State_JointAction;
 import util.StateDomain_JointAction;
 import util.StateMapper_JointAction;
-import util.NFGInfo;
+import util.Info_NFG;
 import util.ObservableEnvInfo;
 import util.State;
 import util.StateDomain;
@@ -101,7 +101,7 @@ public class QLearningAgent extends Agent {
 	
 	@Override
 	public void update(ObservableEnvInfo curr) {
-		NFGInfo info = (NFGInfo)curr;
+		Info_NFG info = (Info_NFG)curr;
 			currentState = (State) stateMapper.getState(curr);
 			//System.out.println(currentState.getFeatures().toString()+", agent:"+this);
 			State prevState = (State) memory.getLast();
@@ -154,7 +154,7 @@ public class QLearningAgent extends Agent {
 	public void constructStructures(ObservableEnvInfo state){
 		String s = state.getClass().toString();
 		if(s.equals("class util.NFGInfo")){
-			NFGInfo nfg = (NFGInfo) state;
+			Info_NFG nfg = (Info_NFG) state;
 
 			stateMapper.init(nfg);
 

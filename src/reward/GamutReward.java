@@ -21,13 +21,13 @@ package reward;
 
 import java.io.*;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Vector;
 
+
 import util.Action;
 import util.ObservableEnvInfo;
-import util.State;
+import util.ReadXml;
 
 
 
@@ -206,6 +206,12 @@ public class GamutReward implements Reward{
 	@Override
 	public int[] getNumActions() {
 		return agentsActions;
+	}
+
+	@Override
+	public void Init(ReadXml n) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

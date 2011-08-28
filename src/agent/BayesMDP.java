@@ -46,7 +46,7 @@ import util.State_JointAction;
 import util.StateDomain_JointAction;
 import util.StateMapper_JointAction;
 import util.MDPModel;
-import util.NFGInfo;
+import util.Info_NFG;
 import util.ObservableEnvInfo;
 import util.State;
 import util.StateDomain;
@@ -124,7 +124,7 @@ public class BayesMDP extends Agent {
 	
 	@Override
 	public void update(ObservableEnvInfo curr) {
-		NFGInfo info = (NFGInfo)curr;
+		Info_NFG info = (Info_NFG)curr;
 		Vector<Action> currJointAct =  stateMapper.getActions(curr);
 		Vector<Object> currO = new Vector<Object>();
 		

@@ -41,7 +41,7 @@ public class StateMapper_Single extends StateMapper<State_JointAction> {
 		state = stateDomain.getState(info);
 	}
 	
-	public State_JointAction getState(NFGInfo info){
+	public State_JointAction getState(Info_NFG info){
 		return state;
 	}
 	
@@ -52,7 +52,7 @@ public class StateMapper_Single extends StateMapper<State_JointAction> {
 	
 	@Override
 	public Vector<Action> getActions(ObservableEnvInfo info){
-		NFGInfo state = (NFGInfo) info;
+		Info_NFG state = (Info_NFG) info;
 		return state.currentJointAction();
 	}
 	

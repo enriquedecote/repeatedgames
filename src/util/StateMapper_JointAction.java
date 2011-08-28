@@ -34,7 +34,7 @@ public class StateMapper_JointAction extends StateMapper<State_JointAction> {
 
 	@Override
 	public void init(ObservableEnvInfo info){
-		NFGInfo state = (NFGInfo) info;
+		Info_NFG state = (Info_NFG) info;
 		Vector<Action> vectA = state.currentJointAction();
 		Vector<Action> vectB = new Vector();
 		Action a0 = vectA.get(0).newInstance();
@@ -47,7 +47,7 @@ public class StateMapper_JointAction extends StateMapper<State_JointAction> {
 		}
 	}
 	
-	public State_JointAction getState(NFGInfo info){
+	public State_JointAction getState(Info_NFG info){
 		Vector<Action> vectA = info.currentJointAction();
 		Vector<Object> vectO = new Vector<Object>();
 		for (Action action : vectA) {
@@ -59,7 +59,7 @@ public class StateMapper_JointAction extends StateMapper<State_JointAction> {
 	
 	@Override
 	public State_JointAction getState(ObservableEnvInfo info){
-		NFGInfo state = (NFGInfo) info;
+		Info_NFG state = (Info_NFG) info;
 		Vector<Action> vectA = state.currentJointAction();
 		Vector<Object> vectO = new Vector<Object>();
 		for (Action action : vectA) {
@@ -71,7 +71,7 @@ public class StateMapper_JointAction extends StateMapper<State_JointAction> {
 	
 	@Override
 	public Vector<Action> getActions(ObservableEnvInfo info){
-		NFGInfo state = (NFGInfo) info;
+		Info_NFG state = (Info_NFG) info;
 		return state.currentJointAction();
 	}
 	

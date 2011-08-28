@@ -25,14 +25,14 @@ import java.util.Vector;
  * @author Enrique Munoz de Cote
  *
  */
-public class NFGInfo implements ObservableEnvInfo {
+public class Info_NFG implements ObservableEnvInfo {
 	protected Object[] jointO;
 	private Vector<Action> jointAction = new Vector();
 	
-	public NFGInfo(){
+	public Info_NFG(){
 	}
 	
-	public NFGInfo(Vector<Action> j){
+	public Info_NFG(Vector<Action> j){
 		Init(j);
 	}
 	

@@ -19,23 +19,12 @@
  ******************************************************************************/
 package experiment;
 
-import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Random;
 import java.util.Vector;
 
-import org.springframework.beans.factory.BeanFactory;
 
-import org.springframework.beans.factory.xml.XmlBeanFactory;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.xml.sax.SAXException;
-import org.apache.xerces.parsers.*;
 
-import reward.GridReward;
 import reward.Reward;
 
 import util.ReadXml;
@@ -45,12 +34,7 @@ import agent.Agent;
 import environment.Environment;
 
 import util.Action;
-import util.CoordinateState;
-import util.StateDomain_Grid;
-import util.State_JointAction;
 import util.ObservableEnvInfo;
-import util.State;
-import util.readxmlv2;
 
 /*
  * the main class of the project.

@@ -23,6 +23,9 @@ import java.util.Vector;
 
 import util.Action;
 import util.ObservableEnvInfo;
+import util.ReadXml;
+
+import org.w3c.dom.Element;
 
 /**
  * An interface representing the reward function of a game.
@@ -35,6 +38,8 @@ public interface Reward {
 
  
  public void Init(String game);
+ 
+ public void Init(ReadXml n);
  
  public double getReward(ObservableEnvInfo s, Vector<Object> actions, int agent);
  

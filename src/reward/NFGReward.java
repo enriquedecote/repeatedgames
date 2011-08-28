@@ -23,9 +23,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+
 import util.Action;
 import util.ObservableEnvInfo;
-import util.State;
+import util.ReadXml;
 
 
 
@@ -178,6 +179,11 @@ public class NFGReward implements Reward{
 	public int[] getNumActions() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	@Override
+	public void Init(ReadXml n) {
+		// TODO Auto-generated method stub
+		
 	}
 
 
