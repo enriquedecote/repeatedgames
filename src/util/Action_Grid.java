@@ -25,32 +25,24 @@ package util;
 * 
 */
 public class Action_Grid extends Action  {
-	
+/*	
 	public static Action_Grid right = new Action_Grid ("right");
 	public static Action_Grid left = new Action_Grid ("left");
 	public static Action_Grid up = new Action_Grid ("up");
 	public static Action_Grid down = new Action_Grid ("down");
+	*/
 	
 
 	// constructors
-	public Action_Grid (String Name){
-		
-		actionName= Name;
-		actionSet.add(right);
-		actionSet.add(left);
-		actionSet.add(up);
-		actionSet.add(down);
-	
+	public Action_Grid (String name){
+		actionName= name;
+		domain = new ActionDomain_Grid();
+		changeToState(name);
 	}
 
 	// constructors
 	public Action_Grid (){
 		//super();
-		actionSet.add(right);
-		actionSet.add(left);
-		actionSet.add(up);
-		actionSet.add(down);
-	
 	}
 	
 }

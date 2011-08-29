@@ -24,11 +24,9 @@
 <bean id="BayesMDP" class="agent.BayesMDP" singleton = "false"></bean>
 <bean id="TeamUP" class="agent.TeamUP" singleton = "false"></bean>
 <bean id ="coordState" class = "util.CoordinateState"></bean>
-<bean id ="gridreward" class = "util.GridReward"></bean>
-	<bean id="gridEnv" class="environment.GridEnvironment"></bean>
+<bean id ="gridRewards" class = "reward.GridReward"></bean>
 	<bean id="rNFG" class="reward.NFGReward"></bean>
 	<bean id="gamutGame" class="reward.GamutReward"></bean>
-	<bean id="grid" class="reward.GridReward"></bean>
 	<bean id="rnfgEnv" class="environment.NFGEnvironment" singleton = "false"></bean>
-	<bean id="rGrid" class="environment.GridEnvironment"></bean>
+	<bean id="grid" class="environment.GridEnvironment"></bean>
 </beans> 

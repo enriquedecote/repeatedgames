@@ -41,7 +41,7 @@ public class ActionDomain_Enum extends ActionDomain {
 		Action Ten = new Action_Enum (10);
 		Action Eleven = new Action_Enum (11);
 		Action Twelve = new Action_Enum (12);
-		actionSet = new Vector<Action>();
+		actionSet = new Vector<Object>();
 		actionSet.add(One);
 		actionSet.add(Two);
 		actionSet.add(Three);

@@ -115,12 +115,9 @@ public class ReadXml {
 	 * @return the created environment
 	 */
 	public Environment constructEnvironment(){
-		NodeList nodes = docEle.getElementsByTagName("Environment");
-		Node type = nodes.item(0).getFirstChild();
-		type = type.getNextSibling();
-		NodeList list = type.getChildNodes();
-		Element e = (Element) list.item(1);
-		String name = e.getAttribute("name");
+		NodeList nodes = docEle.getElementsByTagName("Type");
+		Element e = (Element)nodes.item(0);
+		String name = e.getAttribute("environment");
 		System.out.println("Environment: " + name);
 		Environment env = (Environment)factory.getBean(name);
 		env.Init(e);
@@ -134,9 +131,9 @@ public class ReadXml {
 	public Reward constructReward(ExperimentLogger log){
 		NodeList nodes = docEle.getElementsByTagName("Type");
 		Element e = (Element)nodes.item(0);
-		String name = e.getAttribute("type");
-		System.out.println("\nGame Type: " + name);
-		log.recordConfig("Game Type: " + name);
+		String name = e.getAttribute("rewardType");
+		System.out.println("\nReward type: " + name);
+		log.recordConfig("Reward Type: " + name);
 		Reward r = (Reward)factory.getBean(name);
 		name = e.getAttribute("game");
 		System.out.println("Game: " + name);
@@ -204,6 +201,12 @@ public class ReadXml {
 	
 	public NodeList getElementsByTagName(String s){
 		return docEle.getElementsByTagName(s);
+	}
+	
+	public String getTagAttribute(String tag, String attributeName){
+		NodeList nodes = getElementsByTagName(tag);
+		Element e = (Element)nodes.item(0);
+		return e.getAttribute(attributeName);
 	}
 
 }

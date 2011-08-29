@@ -19,8 +19,9 @@
 -->
 <Test>
 <Environment>
-<Type>
-	<gamutGame type="gamutGame" game="NPlayerPrisonersDilemma" name="rnfgEnv"></gamutGame></Type>
+<Type rewardType="gamutGame" game="NPlayerPrisonersDilemma" name="rnfgEnv">
+
+</Type>
 
 
 

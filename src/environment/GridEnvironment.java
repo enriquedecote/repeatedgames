@@ -19,28 +19,23 @@
  ******************************************************************************/
 package environment;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Vector;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
-import agent.Agent;
 
 import util.Action;
-import util.Action_Grid;
 import util.Info_Grid;
-import util.Info_NFG;
 import util.ObservableEnvInfo;
 /**
  * @author Enrique Munoz de Cote
  * Here's where the way the world behaves lies. It includes several attributes specific of grid domains
  */
+//TODO: fix the starting position to be read from xml
 public class GridEnvironment implements Environment<Action> {
 	private Info_Grid envInfo;
 	private int cols = 0;
 	private int rows = 0;
+	private Vector<Vector<Integer>> jointCoord = new Vector();
 	
 	
 	public GridEnvironment(){
@@ -54,6 +49,7 @@ public class GridEnvironment implements Environment<Action> {
 	@Override
 	public ObservableEnvInfo nextEnvInfo(Vector<Action> actions) {
 		envInfo.updateJointAction(actions);
+		envInfo.updateJointCoord(j);
 		return envInfo;
 	}
 
@@ -64,8 +60,7 @@ public class GridEnvironment implements Environment<Action> {
 
 	@Override
 	public void Init(Vector<Action> actions) {
-		// TODO Auto-generated method stub
-		
+		envInfo.Init(actions);
 	}
 
 	@Override
@@ -73,6 +68,13 @@ public class GridEnvironment implements Environment<Action> {
 		cols = Integer.valueOf(e.getAttribute("columns"));
 		rows = Integer.valueOf(e.getAttribute("rows"));
 		System.out.println("Grid: "+ cols + " x " + rows );
+		
+		//put the agents in the environment
+		for(int i=0; i< envInfo.currentJointAction().size(); i++){//for every agent
+			Vector<Integer> c = new Vector(2);
+			c.add(0);c.add(i);
+			jointCoord.add(c);
+		}
 		
 	}
 	

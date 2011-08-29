@@ -17,41 +17,34 @@
  * Contributors:
  *     Enrique Munoz de Cote - initial API and implementation
  ******************************************************************************/
-/**
- * 
- */
 package util;
 
+import java.util.Vector;
 
 /**
- * @author Enrique Munoz de Cote
+ * @author enrique
  *
  */
-public class Action_Ninteger extends Action {
-	private static int defAction = 0;
-	private int size;
+public class Info_Grid extends Info_NFG{
+	protected Object[] jointC;
+	private Vector<Vector<Integer>> jointCoord = new Vector();
 	
-	
-	public Action_Ninteger(String stringName, int domainRange){
-		actionName = stringName;
-		domain = new ActionDomain_Ninteger(domainRange);
-		size = domainRange;
-	}
-	public Action_Ninteger(int domainRange){
-		domain = new ActionDomain_Ninteger(domainRange);
-		state = defAction;
-		size = domainRange;
+	public Info_Grid(){
+		super();
 	}
 	
-	public Action_Ninteger(int domainRange, int id){
-		domain = new ActionDomain_Ninteger(domainRange);
-		state = defAction;
-		size = domainRange;
-		agentId = id;
+	public Info_Grid(Vector<Action> j){	
+		super(j);
+	}
+	
+	public void updateJointAction(Vector<Action> j){
+		for (int i = 0; i < j.size(); i++) {
+			jointO[i] = j.get(i).getCurrentState();
+		}
 	}
 	
 	
-	public Action_Ninteger newInstance(){
-		return new Action_Ninteger(size, agentId);
+	public void updateJointCoord(Vector<Vector<Integer>> j){
+		jointCoord = j;
 	}
 }

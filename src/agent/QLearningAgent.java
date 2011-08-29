@@ -153,7 +153,7 @@ public class QLearningAgent extends Agent {
 	 */
 	public void constructStructures(ObservableEnvInfo state){
 		String s = state.getClass().toString();
-		if(s.equals("class util.NFGInfo")){
+		if(s.equals("class util.Info_NFG")||s.equals("class util.Info_Grid")){
 			Info_NFG nfg = (Info_NFG) state;
 
 			stateMapper.init(nfg);

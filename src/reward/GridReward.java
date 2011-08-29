@@ -29,6 +29,7 @@ import org.w3c.dom.NodeList;
 import util.Action;
 import util.ObservableEnvInfo;
 import util.ReadXml;
+import util.State;
 
 /**
  * @author enrique
@@ -45,6 +46,8 @@ public class GridReward implements Reward {
 	
 	//walls
 	HashMap<Vector<Integer>,Float> walls = new HashMap<Vector<Integer>,Float>();
+	
+	private int collisionVal = 0;
 	
 	public GridReward() {
 
@@ -83,7 +86,13 @@ public class GridReward implements Reward {
 	 */
 	@Override
 	public double[] getRewards(ObservableEnvInfo s, Vector<Action> actions) {
-		// TODO Auto-generated method stub
+		boolean collision= false;
+		double sum = 0;
+		if (collision)
+			sum = getpudReward(s) + getcoinReward(s) + collisionVal;
+		else
+			sum = getpudReward(s) + getcoinReward(s);
+	return sum;
 		return null;
 	}
 
@@ -127,6 +136,9 @@ public class GridReward implements Reward {
 	public void Init(ReadXml xml) {
 		String splitCoordinate[]  = new String[2];
 		
+		collisionVal = Integer.parseInt(xml.getTagAttribute("Type", "collisionVal"));
+		System.out.println("collision value:" + collisionVal);
+		
 		NodeList coinList = xml.getElementsByTagName("Coins");
 		
 		for (int i = 0; i < coinList.getLength(); i++) {
@@ -141,6 +153,12 @@ public class GridReward implements Reward {
 		
 	}
 	
-	
+	/**
+	 * @param state is the next state of the game
+	 * @return coin reward of the agent for the state
+	 */
+	private float getcoinReward (State state){
+		return coins.get(state);	
+	}
 
 }

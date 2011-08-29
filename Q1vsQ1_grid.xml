@@ -19,7 +19,40 @@
 -->
 <Test>
 <Environment>
-<Type rewardType="rNFG" game="PD" environment="rnfgEnv">
+<!-- this describe a grid environment, coordinates are of the form:
+	x,y and the range of each start at 0 --> 
+<Type environment="grid" rewardType="gridRewards" columns="3" rows="3" collisionVal="-10">
+	<Coins>
+		<Coin>
+			<Coordinate>1,2</Coordinate>
+			<Value>10</Value>
+		</Coin>
+	</Coins>	
+	<!--  
+	<Pods>
+		<Pod>
+			<Coordinate>2,1</Coordinate>
+			<Value>-1</Value>
+		</Pod>
+	</Pods>
+	-->
+	<Walls>
+	<!-- walls are located on top of the cells declared -->
+		<Wall>
+			<Coordinate1>0,0</Coordinate1><!--upper left coordinate --> 
+			<Coordinate2>0,0</Coordinate2><!--lower right coordinate --> 
+			<Value>0</Value><!--this value [0,1] makes a semiwall crossable --> 
+		</Wall>
+		<Wall>
+			<Coordinate1>2,0</Coordinate1><!--upper left coordinate --> 
+			<Coordinate2>2,0</Coordinate2><!--lower right coordinate --> 
+			<Value>0</Value><!--this value [0,1] makes a semiwall crossable --> 
+		</Wall>
+	</Walls>
+</Type>
+
+
+
 <Players><Player>
 	<q-learning epsilon="0.1" epsilonDecay="POLY" alpha="0.1" 
 		alphaDecay="_" gamma="0.95" policy="EGREEDY" name="q-learning" actionType="NINTACTIONS" numActions="2" stateType="JOINTACTIONS" Qinit="0">

@@ -29,20 +29,13 @@ import java.util.Vector;
 * 
 */
 public class ActionDomain_Grid extends ActionDomain {
-	public ActionDomain_Grid(){
-		Action right = new Action_Grid("right");
-		Action left = new Action_Grid("left");
-		Action up = new Action_Grid("up");
-		Action down = new Action_Grid("down");
-		Action put = new Action_Grid("put");
-		actionSet = new Vector<Action>();
-		actionSet.add(right);
-		actionSet.add(left);
-		actionSet.add(up);
-		actionSet.add(down);
-		actionSet.add(put);
 	
-		
-		
+	public ActionDomain_Grid(){
+		actionSet = new Vector();
+		actionSet.add("right");
+		actionSet.add("left");
+		actionSet.add("up");
+		actionSet.add("down");
+		actionSet.add("put");	
 	}
 }
