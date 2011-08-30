@@ -30,7 +30,7 @@ import java.text.SimpleDateFormat;
 import org.w3c.dom.Element;
 
 import util.Action;
-import util.Domain_LeaderFollower;
+import util.ActionDomain_LeaderFollower;
 import util.ObservableEnvInfo;
 import util.OpponentModel;
 import util.Strategy;
@@ -48,7 +48,7 @@ import util.StrategyState;
 public class TeamUP extends Agent {
 
 	private Vector<Integer> sequence = new  Vector<Integer>();
-	private Domain_LeaderFollower stratDomain;
+	private ActionDomain_LeaderFollower stratDomain;
 	//states transforms from joint actions to its encoding state
 	private Map<Vector<Strategy>,StrategyState> states = new HashMap<Vector<Strategy>, StrategyState>();
 	//this is the algorithm's current high level strategy
@@ -120,7 +120,7 @@ public class TeamUP extends Agent {
 		for (int i = 0; i < numPlayers; i++) {
 				
 		}
-		stratDomain = new Domain_LeaderFollower(opponents);
+		stratDomain = new ActionDomain_LeaderFollower(opponents);
 		StrategyState s0 = new StrategyState();
 		stratDomain.add(s0);
 		currentStrategy = new Strategy("S");

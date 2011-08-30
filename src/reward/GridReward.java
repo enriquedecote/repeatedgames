@@ -27,6 +27,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import util.Action;
+import util.Info_Grid;
 import util.ObservableEnvInfo;
 import util.ReadXml;
 import util.State;
@@ -44,8 +45,8 @@ public class GridReward implements Reward {
 	//coins
 	HashMap<Vector<Integer>,Float> coins = new HashMap<Vector<Integer>,Float>();
 	
-	//walls
-	HashMap<Vector<Integer>,Float> walls = new HashMap<Vector<Integer>,Float>();
+	//puds
+	HashMap<Vector<Integer>,Float> puds = new HashMap<Vector<Integer>,Float>();
 	
 	private int collisionVal = 0;
 	
@@ -85,15 +86,17 @@ public class GridReward implements Reward {
 	 * @see reward.Reward#getRewards(util.ObservableEnvInfo, java.util.Vector)
 	 */
 	@Override
-	public double[] getRewards(ObservableEnvInfo s, Vector<Action> actions) {
+	public double[] getRewards(ObservableEnvInfo st, Vector<Action> actions) {
 		boolean collision= false;
-		double sum = 0;
-		if (collision)
-			sum = getpudReward(s) + getcoinReward(s) + collisionVal;
-		else
-			sum = getpudReward(s) + getcoinReward(s);
+		Info_Grid s = (Info_Grid)st;
+		double sum[] = new double[s.currentJointAction().size()];
+		for (int i = 0; i < sum.length; i++) {
+			if (collision)
+				sum[i] = getpudRewards(s)[i] + getcoinRewards(s)[i] + collisionVal;
+			else
+				sum[i] = getpudRewards(s)[i] + getcoinRewards(s)[i];
+		}
 	return sum;
-		return null;
 	}
 
 	/* (non-Javadoc)
@@ -157,8 +160,30 @@ public class GridReward implements Reward {
 	 * @param state is the next state of the game
 	 * @return coin reward of the agent for the state
 	 */
-	private float getcoinReward (State state){
-		return coins.get(state);	
+	private float[] getcoinRewards(Info_Grid s){
+		float[] r = new float[s.currentJointCoord().size()];
+		for (int i = 0; i <s.currentJointCoord().size(); i++) {
+			if(coins.containsKey(s.currentJointCoord().get(i)))
+				r[i] = coins.get(s.currentJointCoord().get(i));
+			else
+				r[i] =  0;
+		}
+		return r;	
+	}
+	
+	/**
+	 * @param state is the next state of the game
+	 * @return coin reward of the agent for the state
+	 */
+	private float[] getpudRewards(Info_Grid s){
+		float[] r = new float[s.currentJointCoord().size()];
+		for (int i = 0; i <s.currentJointCoord().size(); i++) {
+			if(puds.containsKey(s.currentJointCoord().get(i)))
+				r[i] = puds.get(s.currentJointCoord().get(i));
+			else
+				r[i] =  0;
+		}
+		return r;	
 	}
 
 }

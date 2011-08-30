@@ -19,51 +19,37 @@
  ******************************************************************************/
 package agent;
 
-import java.lang.reflect.Method;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Random;
-import java.util.Set;
 import java.util.Vector;
 
 import org.w3c.dom.Element;
 
 import experiment.ExperimentLogger;
-import experiment.Logger;
-
-
-import agent.Agent.Policy;
 
 import reward.Reward;
 
 import util.Action;
-import util.State_JointAction;
-import util.StateDomain_JointAction;
-import util.StateMapper_JointAction;
 import util.Info_NFG;
 import util.ObservableEnvInfo;
 import util.State;
-import util.StateDomain;
 import util.VectorQueue;
-
-// This is a subclass of agent which can be instantiated. It Creates a learning agent which has its own strategies and learnd from its mistakes
+/**
+ * @author Enrique Munoz de Cote
+ * This is a subclass of agent which can be instantiated. It Creates a learning agent 
+ * which has its own strategies and learned from its mistakes
+ */
 public class QLearningAgent extends Agent {
 	
 	//this is the algorithm's current high level strategy
 	//private Map<State,Action> strategy;
 	//private static StateDomain sDomain;
-	private State state;
-	private Random r;
-	
+
 	//learning parameters
-	private float epsilon;
 	private double alpha;
 
 	private static double polyAlphaDecay = 0.5000001;
 	private String alphaDecay;
-	private Map<State,Map<Action,Integer>> alpha_t;
 	private float gamma;
 	
 	//given a state, returns a set of pairs <action,value>
@@ -124,9 +110,6 @@ public class QLearningAgent extends Agent {
 				currO.add(act.getCurrentState());
 			}
 	
-			double currReward = reward.getReward(curr, currO, agentId);
-			Map<Object, Double> mapQ = Q.get(prevState);
-			Action actQ = currJointAct.get(agentId);
 			double Qval = Q.get(prevState).get(currJointAct.get(agentId).getCurrentState());
 			//System.out.println("R("+currO+")="+reward.getReward(curr, currO, agentId));
 			double newQ =

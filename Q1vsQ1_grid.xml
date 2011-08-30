@@ -36,19 +36,19 @@
 		</Pod>
 	</Pods>
 	-->
-	<Walls>
-	<!-- walls are located on top of the cells declared -->
+	<XWalls>
+	<!-- Xwalls are horizontal walls, there are rows-1 number of x coordinates and cols number of y coordinates-->
 		<Wall>
-			<Coordinate1>0,0</Coordinate1><!--upper left coordinate --> 
-			<Coordinate2>0,0</Coordinate2><!--lower right coordinate --> 
+			<Coordinate>0,0</Coordinate>
+			<Size>1</Size>
 			<Value>0</Value><!--this value [0,1] makes a semiwall crossable --> 
 		</Wall>
 		<Wall>
-			<Coordinate1>2,0</Coordinate1><!--upper left coordinate --> 
-			<Coordinate2>2,0</Coordinate2><!--lower right coordinate --> 
+			<Coordinate>0,2</Coordinate>
+			<Size>2,0</Size> 
 			<Value>0</Value><!--this value [0,1] makes a semiwall crossable --> 
 		</Wall>
-	</Walls>
+	</XWalls>
 </Type>
 
 

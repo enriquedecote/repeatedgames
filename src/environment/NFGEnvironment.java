@@ -29,6 +29,7 @@ import org.w3c.dom.Element;
 import util.Action;
 import util.Info_NFG;
 import util.ObservableEnvInfo;
+import util.ReadXml;
 
 /**
  * @author enrique
@@ -61,7 +62,7 @@ public class NFGEnvironment implements Environment<Action> {
 	}
 
 	@Override
-	public void Init(Element e) {
+	public void Init(ReadXml xml) {
 		// TODO Auto-generated method stub
 		
 	}

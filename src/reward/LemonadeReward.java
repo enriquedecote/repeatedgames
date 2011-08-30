@@ -17,38 +17,8 @@
  * Contributors:
  *     Enrique Munoz de Cote - initial API and implementation
  ******************************************************************************/
-package util;
+package reward;
+// not yet implemented
+public class LemonadeReward {
 
-import java.util.Vector;
-
-/**
- * @author enrique
- *
- */
-public class Info_Grid extends Info_NFG{
-	protected Object[] jointC;
-	private Vector<int[]> jointCoord = new Vector();
-	
-	public Info_Grid(){
-		super();
-	}
-	
-	public Info_Grid(Vector<Action> j){	
-		super(j);
-	}
-	
-	public void updateJointAction(Vector<Action> j){
-		for (int i = 0; i < j.size(); i++) {
-			jointO[i] = j.get(i).getCurrentState();
-		}
-	}
-	
-	
-	public void updateJointCoord(Vector<int[]> j){
-		jointCoord = j;
-	}
-	
-	public Vector<int[]> currentJointCoord(){
-		return jointCoord;
-	}
 }

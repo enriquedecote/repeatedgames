@@ -22,6 +22,8 @@ package environment;
 import java.util.Vector;
 
 import util.ObservableEnvInfo;
+import util.ReadXml;
+
 import org.w3c.dom.Element;
 
 
@@ -56,5 +58,5 @@ public interface Environment<A> {
 	/**
 	 * @param e
 	 */
-	public void Init(Element e);
+	public void Init(ReadXml xml);
 }

@@ -120,7 +120,7 @@ public class ReadXml {
 		String name = e.getAttribute("environment");
 		System.out.println("Environment: " + name);
 		Environment env = (Environment)factory.getBean(name);
-		env.Init(e);
+		env.Init(this);
 		return env;
 	}
 	
@@ -191,7 +191,7 @@ public class ReadXml {
 		return textVal;
 	}
 	
-	private static int getIntValue(Element ele, String tagName) {
+	public static int getIntValue(Element ele, String tagName) {
 		return Integer.parseInt(getTextValue(ele,tagName));
 	}
 	

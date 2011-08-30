@@ -19,13 +19,21 @@
  ******************************************************************************/
 package environment;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 import java.util.Vector;
 
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+import agent.Agent.ActionType;
 
 import util.Action;
+import util.Action_Grid;
 import util.Info_Grid;
 import util.ObservableEnvInfo;
+import util.ReadXml;
 /**
  * @author Enrique Munoz de Cote
  * Here's where the way the world behaves lies. It includes several attributes specific of grid domains
@@ -35,7 +43,17 @@ public class GridEnvironment implements Environment<Action> {
 	private Info_Grid envInfo;
 	private int cols = 0;
 	private int rows = 0;
-	private Vector<Vector<Integer>> jointCoord = new Vector();
+	private Vector<int[]> jointCoord = new Vector<int[]>();
+	protected Random random = new Random();
+	public enum ActionType
+	{
+	    up, down, left, right, put; 
+	}
+	
+	//walls
+	Map<int[],Float> xWalls = new HashMap<int[],Float>();
+	//walls
+	Map<int[],Float> yWalls = new HashMap<int[],Float>();
 	
 	
 	public GridEnvironment(){
@@ -49,7 +67,64 @@ public class GridEnvironment implements Environment<Action> {
 	@Override
 	public ObservableEnvInfo nextEnvInfo(Vector<Action> actions) {
 		envInfo.updateJointAction(actions);
-		envInfo.updateJointCoord(j);
+		
+		Vector<int[]> coords = new Vector<int[]>();
+		for (int i = 0; i < actions.size(); i++) {
+			Action_Grid action = (Action_Grid)actions.get(i);
+			int[] coord = jointCoord.get(i);
+			int[] tmp;
+			
+			switch (ActionType.valueOf((String)action.getCurrentState())) {
+			case up:
+				if((coord[0] + 1) < rows || !xWalls.containsKey(coord))
+					coord[0] = coord[0] + 1;
+				break;
+				
+			case down:
+				tmp = coord;
+				tmp[0] = tmp[0] -1;
+				if((coord[0] -1) > -1 || !xWalls.containsKey(tmp))
+					coord[0] = coord[0] - 1;
+				break;
+				
+			case right:
+				if((coord[1] + 1) < cols || !yWalls.containsKey(coord))
+					coord[1] = coord[1] + 1;
+				break;
+				
+			case left:
+				tmp = coord;
+				tmp[1] = tmp[1] -1;
+				if((coord[1] -1) > -1 || !yWalls.containsKey(tmp))
+					coord[1] = coord[1] - 1;
+				break;
+			}
+			coords.add(coord);
+		}
+		
+		//now check for collisions
+		Vector<Integer> collision = new Vector<Integer>();
+		for (int i = 0; i < actions.size(); i++) {
+			int[] coord = coords.get(i);
+			collision.add(i);
+			for (int k = 0; k < actions.size(); k++) {
+				if(coords.get(k) == coord && i!=k){
+					collision.add(k);
+				}	
+			}
+			if(collision.size() > 1){
+				int randomA = random.nextInt(collision.size());//choose one agent randomly
+				for (int k = 0; k < collision.size(); k++) {
+					if(k != randomA){//the agent chosen randomly will stay in its new coordinates, the rest should return
+						coords.remove(collision.get(k));
+						coords.add(collision.get(k), jointCoord.get(collision.get(k)));
+					}
+				}
+			}
+			collision.clear();
+		}
+		jointCoord = coords;
+		envInfo.updateJointCoord(coords);
 		return envInfo;
 	}
 
@@ -64,16 +139,49 @@ public class GridEnvironment implements Environment<Action> {
 	}
 
 	@Override
-	public void Init(Element e) {
-		cols = Integer.valueOf(e.getAttribute("columns"));
-		rows = Integer.valueOf(e.getAttribute("rows"));
+	public void Init(ReadXml xml) {
+		cols = Integer.parseInt(xml.getTagAttribute("Type", "columns"));
+		rows = Integer.parseInt(xml.getTagAttribute("Type", "rows"));
 		System.out.println("Grid: "+ cols + " x " + rows );
 		
 		//put the agents in the environment
-		for(int i=0; i< envInfo.currentJointAction().size(); i++){//for every agent
-			Vector<Integer> c = new Vector(2);
-			c.add(0);c.add(i);
-			jointCoord.add(c);
+		int[] coord = new int[2];
+		coord[0]=0; coord[1]=0;
+		jointCoord.add(coord);
+		coord[0]=0; coord[1]=2;
+		jointCoord.add(coord);
+		envInfo.updateJointCoord(jointCoord);
+		
+		//build walls
+		NodeList coinList;
+		String splitCoordinate[]  = new String[2];
+		//build Xwalls
+		coinList = xml.getElementsByTagName("XWalls");
+		for (int i = 0; i < coinList.getLength(); i++) {
+			NodeList list = coinList.item(i).getChildNodes();
+			Element wall = (Element) list.item(1);
+			splitCoordinate = xml.getTextValue (wall, "Coordinate").split("\\,");
+			int[] wcoord= new int[2];
+			wcoord[0] = Integer.parseInt(splitCoordinate[0]);
+			wcoord[1] = Integer.parseInt(splitCoordinate[1]);
+			for (int j = 0; j < xml.getIntValue(wall, "Size"); j++) {
+				xWalls.put(wcoord, xml.getFloatValue(wall, "Value"));
+				wcoord[0] = wcoord[1] + 1;
+			}
+		}
+		//build Ywalls
+		coinList = xml.getElementsByTagName("YWalls");
+		for (int i = 0; i < coinList.getLength(); i++) {
+			NodeList list = coinList.item(i).getChildNodes();
+			Element wall = (Element) list.item(1);
+			splitCoordinate = xml.getTextValue (wall, "Coordinate").split("\\,");
+			int[] wcoord= new int[2];
+			wcoord[0] = Integer.parseInt(splitCoordinate[0]);
+			wcoord[1] = Integer.parseInt(splitCoordinate[1]);
+			for (int j = 0; j < xml.getIntValue(wall, "Size"); j++) {
+				yWalls.put(wcoord, xml.getFloatValue(wall, "Value"));
+				wcoord[1] = wcoord[1] + 1;
+			}
 		}
 		
 	}

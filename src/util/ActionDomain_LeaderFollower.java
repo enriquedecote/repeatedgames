@@ -24,14 +24,14 @@ import java.util.Iterator;
 import java.util.Set;
 
 
-public class Domain_LeaderFollower implements StateSet<StrategyState> {
+public class ActionDomain_LeaderFollower implements StateSet<StrategyState> {
 	protected Set<StrategyState> states;
 	
-	public Domain_LeaderFollower(Set<OpponentModel> players){
+	public ActionDomain_LeaderFollower(Set<OpponentModel> players){
 		Init(players);
 	}
 	
-	public Domain_LeaderFollower(OpponentModel[] opponents){
+	public ActionDomain_LeaderFollower(OpponentModel[] opponents){
 		Init(transformOppToSet(opponents));
 	}
 	

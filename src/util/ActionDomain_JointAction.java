@@ -19,9 +19,9 @@
  ******************************************************************************/
 package util;
 
-public class Domain_JointAction extends ActionDomain {
+public class ActionDomain_JointAction extends ActionDomain {
 
-	public Domain_JointAction(){
+	public ActionDomain_JointAction(){
 		
 	}
 	

@@ -39,12 +39,12 @@ import agent.QLearningAgent;
 public class StateDomain_Grid extends StateDomain {
 	
 	
-	public static Vector<CoordinateState> domain = new Vector <CoordinateState>();
+	public static Vector<State_Grid_old> domain = new Vector <State_Grid_old>();
 	
 	
 	// constructor for the class
 	public StateDomain_Grid (int row, int column, int player){
-		domain = new Vector <CoordinateState>();
+		domain = new Vector <State_Grid_old>();
 		init (row, column, player);
 	}
 	
@@ -100,7 +100,7 @@ public class StateDomain_Grid extends StateDomain {
 	    	state.put(agentArray[s], allCoordinates.get(a[s]));
 	      }
 	      
-	     CoordinateState feature = new CoordinateState(state);
+	     State_Grid_old feature = new State_Grid_old(state);
 	     
 	      domain.add(feature);	     
 		
@@ -110,15 +110,10 @@ public class StateDomain_Grid extends StateDomain {
 	}
 			
 // adding coordinates to the domain
-	public void add (CoordinateState state){
+	public void add (State_Grid_old state){
 		domain.add(state);		
 	}
-// get state domain		
-	public Vector<CoordinateState> getStateSet(){
-		
-		return domain;
-		
-	}	
+
 // returns size of the domain	
 	public int size(){
 		return domain.size();

@@ -18,7 +18,11 @@
  *     Enrique Munoz de Cote - initial API and implementation
  ******************************************************************************/
 package util;
-// not yet implemented
-public class LemonadeReward {
 
+/**
+ * @author Enrique Munoz de Cote
+ *
+ */
+public class State_JoiontActionGrid extends State_JointAction {
+	
 }
