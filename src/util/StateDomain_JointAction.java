@@ -51,6 +51,8 @@ public class StateDomain_JointAction extends StateDomain<State_JointAction> {
 		mapping = new HashMap<Vector<Object>, State_JointAction>();
 		numAgents = actions.size();
 		agentsActions = new int[numAgents];
+		
+		//linearize the state space 
 		int numberOfOutcomes = 1;
 		  for (int i = 0; i < numAgents; i++){
 			  agentsActions[i] = actions.get(i).getDomainSet().size();
@@ -60,7 +62,7 @@ public class StateDomain_JointAction extends StateDomain<State_JointAction> {
 		
 		for (int i = 0; i < numberOfOutcomes; i++) {
 			State_JointAction state = new State_JointAction();
-			int[] jointAct = toActions(i);
+			int[] jointAct = toActions(i);//transform the linearized version into the vector version
 			for (int j = 0; j < jointAct.length; j++) 
 				state.addFeature(jointAct[j]);
 			domain.add(state);

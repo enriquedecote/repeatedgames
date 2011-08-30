@@ -18,42 +18,38 @@
  *     Enrique Munoz de Cote - initial API and implementation
  ******************************************************************************/
 package util;
-import java.util.Set;
+
 import java.util.Vector;
 
 /**
- * @author Enrique Munoz de Cote
- *
- * This is the abstract class StateDomain. Implementations of this class instantiate
- *  all the possible different state (of subtype State)
- * @param T a subclass of state
+ * @author enrique
+ * 
+ * Implements a coordinate.
  */
-public abstract class StateDomain<State> {
-	
-	protected Set<State> domain;
-	
-	public StateDomain(){
-		
+public class Coordinate {
+	private int[] limits = new int[2];
+	private int[] state = new int[2];
+
+	public Coordinate(int rowSize, int colSize){
+		limits[0] = rowSize;
+		limits[1] = colSize;
+		state[0] = rowSize-1;
+		state[1] = colSize-1;
 	}
 	
-	// Method to get the domain
-	public Set<State> getStateSet () {
-		return domain;
+	public int[] getCurrentState(){
+		return state;
 	}
-// return domain size
-	public int size() {
-		return domain.size();
+	
+	public void changeToState(int[] s){
+		state = s;
 	}
-	 
-	/**
-	 * Transforms info coming from the environment to the perceived state info
-	 * @param info the info coming from the environment
-	 * @return
-	 */
-	public State getState(ObservableEnvInfo info){
-		return null;
+	
+	public void changeToState(int index, int state){
+		this.state[index] = state;
 	}
-	 
+	
+	public int[] getLimits(){
+		return limits;
+	}
 }
-
-

@@ -27,7 +27,7 @@ import java.util.Vector;
  */
 public class Info_Grid extends Info_NFG{
 	protected Object[] jointC;
-	private Vector<int[]> jointCoord = new Vector();
+	private Vector<Coordinate> jointCoord = new Vector();
 	
 	public Info_Grid(){
 		super();
@@ -44,11 +44,11 @@ public class Info_Grid extends Info_NFG{
 	}
 	
 	
-	public void updateJointCoord(Vector<int[]> j){
+	public void updateJointCoord(Vector<Coordinate> j){
 		jointCoord = j;
 	}
 	
-	public Vector<int[]> currentJointCoord(){
+	public Vector<Coordinate> currentJointCoord(){
 		return jointCoord;
 	}
 }

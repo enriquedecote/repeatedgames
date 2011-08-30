@@ -17,51 +17,66 @@
  * Contributors:
  *     Enrique Munoz de Cote - initial API and implementation
  ******************************************************************************/
-/**
- * 
- */
 package util;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.Vector;
 
 /**
  * @author Enrique Munoz de Cote
  *
- * translates (maps) pieces of ObservableEnvInfo to a state belonging to StateDomain
  */
-public abstract class StateMapper<State> {
-	protected StateDomain<State> stateDomain;
+public class StateMapper_JointActionGrid extends StateMapper<State_JointActionGrid> {
 	
-	//mapping transforms from joint actions to its encoding state
-	protected Map<Vector<Object>,State> mapping = new HashMap<Vector<Object>, State>();
-	
-	public void init(ObservableEnvInfo state){
+	public StateMapper_JointActionGrid(){
+	}
+
+	@Override
+	public void init(ObservableEnvInfo info){
+		Info_Grid state = (Info_Grid) info;
+/*		Vector<Action> vectA = state.currentJointAction();
+		Vector<Action> vectB = new Vector();
+		Action a0 = vectA.get(0).newInstance();
+		Action a1 = vectA.get(1).newInstance();
+		vectB.add(a0); vectB.add(a1);*/
+		stateDomain = new StateDomain_JointActionGrid(state);
+
+		for (State_JointActionGrid st : stateDomain.getStateSet()) {
+			mapping.put(st.getFeatures(),st);
+		}
 	}
 	
-	public Set<State> getStateSet(){
-		return stateDomain.getStateSet();
-	}
-	public StateDomain<State> getStateDomain(){
-		return stateDomain;
-	}
-	
-	
-	public State getState(Vector<Object> state){
-		return mapping.get(state);
+	public State_JointAction getState(Info_NFG info){
+		Vector<Action> vectA = info.currentJointAction();
+		Vector<Object> vectO = new Vector<Object>();
+		for (Action action : vectA) {
+			vectO.add(action.getCurrentState());
+		}
+		
+		return mapping.get(vectO);
 	}
 	
-	public State getState(ObservableEnvInfo state){
-		return null;
+	@Override
+	public State_JointActionGrid getState(ObservableEnvInfo info){
+		Info_NFG state = (Info_NFG) info;
+		Vector<Action> vectA = state.currentJointAction();
+		Vector<Object> vectO = new Vector<Object>();
+		for (Action action : vectA) {
+			vectO.add(action.getCurrentState());
+		}
+		
+		return mapping.get(vectO);
 	}
 	
+	@Override
 	public Vector<Action> getActions(ObservableEnvInfo info){
-		return null;
+		Info_NFG state = (Info_NFG) info;
+		return state.currentJointAction();
 	}
 	
+	@Override
 	public Vector<Object> getFeatures(ObservableEnvInfo info){
-		return null;
+		return getState(info).getFeatures();
 	}
 }

@@ -31,6 +31,7 @@ import agent.Agent.ActionType;
 
 import util.Action;
 import util.Action_Grid;
+import util.Coordinate;
 import util.Info_Grid;
 import util.ObservableEnvInfo;
 import util.ReadXml;
@@ -43,7 +44,7 @@ public class GridEnvironment implements Environment<Action> {
 	private Info_Grid envInfo;
 	private int cols = 0;
 	private int rows = 0;
-	private Vector<int[]> jointCoord = new Vector<int[]>();
+	private Vector<Coordinate> jointCoord = new Vector<Coordinate>();
 	protected Random random = new Random();
 	public enum ActionType
 	{
@@ -68,35 +69,35 @@ public class GridEnvironment implements Environment<Action> {
 	public ObservableEnvInfo nextEnvInfo(Vector<Action> actions) {
 		envInfo.updateJointAction(actions);
 		
-		Vector<int[]> coords = new Vector<int[]>();
+		Vector<Coordinate> coords = new Vector<Coordinate>();
 		for (int i = 0; i < actions.size(); i++) {
 			Action_Grid action = (Action_Grid)actions.get(i);
-			int[] coord = jointCoord.get(i);
-			int[] tmp;
+			Coordinate coord = jointCoord.get(i);
+			Coordinate tmp;
 			
 			switch (ActionType.valueOf((String)action.getCurrentState())) {
 			case up:
-				if((coord[0] + 1) < rows || !xWalls.containsKey(coord))
-					coord[0] = coord[0] + 1;
+				if((coord.getCurrentState()[0] + 1) < rows || !xWalls.containsKey(coord.getCurrentState()))
+					coord.changeToState(0, coord.getCurrentState()[0] + 1);
 				break;
 				
 			case down:
 				tmp = coord;
-				tmp[0] = tmp[0] -1;
-				if((coord[0] -1) > -1 || !xWalls.containsKey(tmp))
-					coord[0] = coord[0] - 1;
+				tmp.changeToState(0,tmp.getCurrentState()[0] -1);
+				if((coord.getCurrentState()[0] -1) > -1 || !xWalls.containsKey(tmp))
+					coord.changeToState(0,coord.getCurrentState()[0] - 1);
 				break;
 				
 			case right:
-				if((coord[1] + 1) < cols || !yWalls.containsKey(coord))
-					coord[1] = coord[1] + 1;
+				if((coord.getCurrentState()[1] + 1) < cols || !yWalls.containsKey(coord))
+					coord.changeToState(1,coord.getCurrentState()[1] + 1);
 				break;
 				
 			case left:
 				tmp = coord;
-				tmp[1] = tmp[1] -1;
-				if((coord[1] -1) > -1 || !yWalls.containsKey(tmp))
-					coord[1] = coord[1] - 1;
+				tmp.changeToState(1,tmp.getCurrentState()[1] -1);
+				if((coord.getCurrentState()[1] -1) > -1 || !yWalls.containsKey(tmp))
+					coord.changeToState(1,coord.getCurrentState()[1] - 1);
 				break;
 			}
 			coords.add(coord);
@@ -105,10 +106,10 @@ public class GridEnvironment implements Environment<Action> {
 		//now check for collisions
 		Vector<Integer> collision = new Vector<Integer>();
 		for (int i = 0; i < actions.size(); i++) {
-			int[] coord = coords.get(i);
+			Coordinate coord = coords.get(i);
 			collision.add(i);
 			for (int k = 0; k < actions.size(); k++) {
-				if(coords.get(k) == coord && i!=k){
+				if(coords.get(k).getCurrentState() == coord.getCurrentState() && i!=k){
 					collision.add(k);
 				}	
 			}
@@ -146,10 +147,14 @@ public class GridEnvironment implements Environment<Action> {
 		
 		//put the agents in the environment
 		int[] coord = new int[2];
+		Coordinate coord1 = new Coordinate(rows,cols);
+		Coordinate coord2 = new Coordinate(rows,cols);
 		coord[0]=0; coord[1]=0;
-		jointCoord.add(coord);
+		coord1.changeToState(coord);
+		jointCoord.add(coord1);
 		coord[0]=0; coord[1]=2;
-		jointCoord.add(coord);
+		coord2.changeToState(coord);
+		jointCoord.add(coord2);
 		envInfo.updateJointCoord(jointCoord);
 		
 		//build walls
