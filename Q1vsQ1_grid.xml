@@ -55,11 +55,11 @@
 
 <Players><Player>
 	<q-learning epsilon="0.1" epsilonDecay="POLY" alpha="0.1" 
-		alphaDecay="_" gamma="0.95" policy="EGREEDY" name="q-learning" actionType="NINTACTIONS" numActions="2" stateType="JOINTACTIONS" Qinit="0">
+		alphaDecay="_" gamma="0.95" policy="EGREEDY" name="q-learning" actionType="GRID" numActions="2" stateType="JOINTACTIONSGRID" Qinit="0">
 	</q-learning></Player>
   <Player>
 	<q-learning epsilon="0.1" epsilonDecay="POLY" alpha="0.1"
-		alphaDecay="_" gamma="0.95" policy="EGREEDY" name="q-learning" actionType="NINTACTIONS" numActions="2" stateType="JOINTACTIONS" Qinit="0">
+		alphaDecay="_" gamma="0.95" policy="EGREEDY" name="q-learning" actionType="GRID" numActions="2" stateType="JOINTACTIONSGRID" Qinit="0">
 	</q-learning></Player>
 </Players>
 </Environment>

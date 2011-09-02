@@ -34,6 +34,7 @@ import reward.Reward;
 import agent.Agent;
 
 import util.Action;
+import util.ObservableEnvInfo;
 import util.State_JointAction;
 import util.StateDomain_JointAction;
 import util.State;
@@ -232,6 +233,15 @@ public class ExperimentLogger {
 		//config.append(ret);
 	}
 
+	public void recordState(ObservableEnvInfo state){
+		Vector<Object> s = state.currentState();
+		if(s == null)
+			return;
+		for (Object o : s) {
+			content.append(o + "\t");
+		}
+	}
+	
 	public void recordActions(Vector<Object> act){
 		for (Object o : act) {
 			content.append(o + "\t");

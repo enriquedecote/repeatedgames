@@ -47,26 +47,14 @@ public class StateMapper_JointActionGrid extends StateMapper<State_JointActionGr
 		}
 	}
 	
-	public State_JointAction getState(Info_NFG info){
-		Vector<Action> vectA = info.currentJointAction();
-		Vector<Object> vectO = new Vector<Object>();
-		for (Action action : vectA) {
-			vectO.add(action.getCurrentState());
-		}
-		
-		return mapping.get(vectO);
+	public State_JointActionGrid getState(Info_Grid info){
+		return stateDomain.getState(info);
 	}
 	
 	@Override
 	public State_JointActionGrid getState(ObservableEnvInfo info){
 		Info_NFG state = (Info_NFG) info;
-		Vector<Action> vectA = state.currentJointAction();
-		Vector<Object> vectO = new Vector<Object>();
-		for (Action action : vectA) {
-			vectO.add(action.getCurrentState());
-		}
-		
-		return mapping.get(vectO);
+		return stateDomain.getState(state);
 	}
 	
 	@Override

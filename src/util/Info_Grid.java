@@ -51,4 +51,20 @@ public class Info_Grid extends Info_NFG{
 	public Vector<Coordinate> currentJointCoord(){
 		return jointCoord;
 	}
+	
+	public Vector<int[]> currentArrayJointCoord(){
+		Vector<int[]> a = new Vector<int[]>();
+		for (int i = 0; i < jointCoord.size(); i++) {
+			a.add(jointCoord.get(i).getCurrentState());
+		}
+		return a;
+	}
+	
+	public Vector<Object> currentState(){
+		Vector<Object> o = new Vector<Object>();
+		for (Coordinate c : jointCoord) {
+			o.add(c.getCurrentState());
+		}
+		return o;
+	}
 }

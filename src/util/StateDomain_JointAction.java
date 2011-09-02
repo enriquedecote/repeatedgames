@@ -87,7 +87,7 @@ public class StateDomain_JointAction extends StateDomain<State_JointAction> {
 	 */
 	public State_JointAction getState(ObservableEnvInfo e){
 		String s = e.getClass().toString();
-		if(s.equals("class util.NFGInfo")){
+		if(s.equals("class util.Info_NFG")){
 			Info_NFG nfg = (Info_NFG) e;
 			Vector<Action> vectA = nfg.currentJointAction();
 			Vector<Object> vectO = new Vector<Object>();

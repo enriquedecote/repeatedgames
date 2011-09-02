@@ -158,12 +158,13 @@ public class GridEnvironment implements Environment<Action> {
 		envInfo.updateJointCoord(jointCoord);
 		
 		//build walls
-		NodeList coinList;
+		NodeList wallList;
 		String splitCoordinate[]  = new String[2];
 		//build Xwalls
-		coinList = xml.getElementsByTagName("XWalls");
-		for (int i = 0; i < coinList.getLength(); i++) {
-			NodeList list = coinList.item(i).getChildNodes();
+		wallList = xml.getElementsByTagName("XWalls");
+		for (int i = 1; i < wallList.getLength(); i++) {
+			NodeList list = wallList.item(i).getChildNodes();
+			System.out.println(list.getLength());
 			Element wall = (Element) list.item(1);
 			splitCoordinate = xml.getTextValue (wall, "Coordinate").split("\\,");
 			int[] wcoord= new int[2];
@@ -175,9 +176,9 @@ public class GridEnvironment implements Environment<Action> {
 			}
 		}
 		//build Ywalls
-		coinList = xml.getElementsByTagName("YWalls");
-		for (int i = 0; i < coinList.getLength(); i++) {
-			NodeList list = coinList.item(i).getChildNodes();
+		wallList = xml.getElementsByTagName("YWalls");
+		for (int i = 0; i < wallList.getLength(); i++) {
+			NodeList list = wallList.item(i).getChildNodes();
 			Element wall = (Element) list.item(1);
 			splitCoordinate = xml.getTextValue (wall, "Coordinate").split("\\,");
 			int[] wcoord= new int[2];

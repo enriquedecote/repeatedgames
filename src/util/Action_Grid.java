@@ -42,7 +42,18 @@ public class Action_Grid extends Action  {
 
 	// constructors
 	public Action_Grid (){
-		//super();
+		domain = new ActionDomain_Grid();
+		changeToState(domain.getFirstAction());
+	}
+	
+	public Action_Grid(int id){
+		agentId = id; 
+		domain = new ActionDomain_Grid();
+		changeToState(domain.getFirstAction());
+	}
+	
+	public Action_Grid newInstance(){
+		return new Action_Grid(agentId);
 	}
 	
 }

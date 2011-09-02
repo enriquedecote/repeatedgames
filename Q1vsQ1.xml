@@ -20,6 +20,7 @@
 <Test>
 <Environment>
 <Type rewardType="rNFG" game="PD" environment="rnfgEnv">
+</Type>
 <Players><Player>
 	<q-learning epsilon="0.1" epsilonDecay="POLY" alpha="0.1" 
 		alphaDecay="_" gamma="0.95" policy="EGREEDY" name="q-learning" actionType="NINTACTIONS" numActions="2" stateType="JOINTACTIONS" Qinit="0">

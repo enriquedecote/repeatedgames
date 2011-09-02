@@ -70,12 +70,12 @@ public abstract class Agent {
 	
 	public enum ActionType
 	{
-	    TWOACTIONS, NINTACTIONS; 
+	    TWOACTIONS, NINTACTIONS, GRID; 
 	}
 	
 	public enum StateType
 	{
-	    JOINTACTIONS, _; 
+	    JOINTACTIONS, JOINTACTIONSGRID, _; 
 	}
 	
 // returns the current action of the agent
@@ -112,6 +112,11 @@ public abstract class Agent {
 			//log.recordConfig("\t jointaction states");
 			System.out.println("\t jointaction states");
 			break;
+			
+		case JOINTACTIONSGRID:
+			stateMapper = new StateMapper_JointActionGrid();
+			System.out.println("\t jointactionGrid states");
+			break;
 		
 		case _:
 			stateMapper = new StateMapper_Single();
@@ -131,6 +136,10 @@ public abstract class Agent {
 			currentAction = new Action_Ninteger(numberActions, agentId);
 			//log.recordConfig("\t actionType: " + numberActions + "-intActions");
 			System.out.println("\t actionType: " + numberActions + "-intActions");
+			break;
+			
+		case GRID:
+			currentAction = new Action_Grid(agentId);
 			break;
 			
 		default:

@@ -42,7 +42,8 @@ public class Coordinate {
 	}
 	
 	public void changeToState(int[] s){
-		state = s;
+		for (int i = 0; i < s.length; i++) 
+			state[i] = s[i];
 	}
 	
 	public void changeToState(int index, int state){

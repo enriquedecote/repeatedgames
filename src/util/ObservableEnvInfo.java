@@ -22,10 +22,20 @@
  */
 package util;
 
+import java.util.Vector;
+
 /**
  * @author Enrique Munoz de Cote
  *
  */
 public interface ObservableEnvInfo {
+	
+	public Vector<Action> currentJointAction();
+	
+	/**
+	 * This should get all relevant state info BUT the joint actions (there's a method for that)
+	 * @return all relevant state info
+	 */
+	public Vector<Object> currentState();
 
 }

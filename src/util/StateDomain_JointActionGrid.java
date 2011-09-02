@@ -27,6 +27,7 @@ import java.util.Vector;
 
 /**
  * @author enrique
+ * This implements statedomain for integer joint actions and coordinates
  *
  */
 public class StateDomain_JointActionGrid extends StateDomain<State_JointActionGrid> {
@@ -62,7 +63,7 @@ public class StateDomain_JointActionGrid extends StateDomain<State_JointActionGr
 				for (int m = 0; m < limits[1]; m++) {//for each joint coordinate
 					for (int i = 0; i < numberOfActions; i++) {
 						State_JointActionGrid s = new State_JointActionGrid();
-						
+						s.addFeature(l); s.addFeature(m);
 						int[] jointAct = toActions(i);
 						for (int j = 0; j < jointAct.length; j++) 
 							s.addFeature(jointAct[j]);
@@ -76,7 +77,7 @@ public class StateDomain_JointActionGrid extends StateDomain<State_JointActionGr
 
 	
 // get state domain		
-	public Set<State_JointAction> getStateSet(){
+	public Set<State_JointActionGrid> getStateSet(){
 		return domain;	
 	}	
 // returns size of the domain	
@@ -89,17 +90,19 @@ public class StateDomain_JointActionGrid extends StateDomain<State_JointActionGr
 	 * @param info the info coming from the environment
 	 * @return
 	 */
-	public State_JointAction getState(ObservableEnvInfo e){
+	public State_JointActionGrid getState(ObservableEnvInfo e){
 		String s = e.getClass().toString();
-		if(s.equals("class util.NFGInfo")){
-			Info_NFG nfg = (Info_NFG) e;
-			Vector<Action> vectA = nfg.currentJointAction();
+		if(s.equals("class util.Info_Grid")){
+			Info_Grid grid = (Info_Grid) e;
+			Vector<int[]> coord = grid.currentArrayJointCoord();
+			Map<Vector<Object>,State_JointActionGrid>  jointA= mapping.get(coord);
+			Vector<Action> vectA = grid.currentJointAction();
 			Vector<Object> vectO = new Vector<Object>();
 			for (int i=0; i< vectA.size(); i++) {
 				vectO.add(vectA.get(i));
 			}
 			
-			return mapping.get(vectO);
+			return jointA.get(vectO);
 		}
 		else{
 			System.err.println("the state info is not of type NFGInfo, JointActionStateDomain cannot handdle this info type");

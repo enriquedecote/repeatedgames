@@ -135,7 +135,18 @@ public class Experiment {
 
 		// 2) get environmental change (foe state perceptions for agents)
 		currentState = env.nextEnvInfo(jointAction);
+		for (Object o : currentState.currentState()) {
+			System.out.print("(");
+			int[] c=(int[])o;
+			for (int i : c) {
+				System.out.print(i+",");
+			}
+			System.out.print("), ");
+			
+		}
 		double[] instReward = rewards.getRewards(currentState,jointAction);
+		//System.out.println("rewards: "+instReward);
+		log.recordState(currentState);
 		log.recordActions(jointActionString);
 		//System.out.println("State:"+jointActionString);
 		// 3) update agents
