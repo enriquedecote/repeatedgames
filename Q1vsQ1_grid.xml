@@ -22,6 +22,7 @@
 <!-- this describe a grid environment, coordinates are of the form:
 	x,y and the range of each start at 0 --> 
 <Type environment="grid" rewardType="gridRewards" columns="3" rows="3" collisionVal="-10">
+</Type>
 	<Coins>
 		<Coin>
 			<Coordinate>1,2</Coordinate>
@@ -36,21 +37,16 @@
 		</Pod>
 	</Pods>
 	-->
-	<XWalls>
-	<!-- Xwalls are horizontal walls, there are rows-1 number of x coordinates and cols number of y coordinates-->
-		<Wall>
+		<XWall>
 			<Coordinate>0,0</Coordinate>
 			<Size>1</Size>
 			<Value>0</Value><!--this value [0,1] makes a semiwall crossable --> 
-		</Wall>
-		<Wall>
+		</XWall>
+		<XWall>
 			<Coordinate>0,2</Coordinate>
-			<Size>2,0</Size> 
+			<Size>1</Size> 
 			<Value>0</Value><!--this value [0,1] makes a semiwall crossable --> 
-		</Wall>
-	</XWalls>
-</Type>
-
+		</XWall>
 
 
 <Players><Player>

@@ -53,4 +53,10 @@ public class Coordinate {
 	public int[] getLimits(){
 		return limits;
 	}
+	
+	public Coordinate clone(){
+		Coordinate x = new Coordinate(limits[0], limits[1]);
+		x.changeToState(state);
+		return x;
+	}
 }

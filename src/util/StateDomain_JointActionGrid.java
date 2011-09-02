@@ -101,7 +101,7 @@ public class StateDomain_JointActionGrid extends StateDomain<State_JointActionGr
 			for (int i=0; i< vectA.size(); i++) {
 				vectO.add(vectA.get(i));
 			}
-			
+			mapping.get(arg0)
 			return jointA.get(vectO);
 		}
 		else{
