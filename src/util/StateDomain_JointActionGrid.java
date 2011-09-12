@@ -39,6 +39,7 @@ public class StateDomain_JointActionGrid extends StateDomain<State_JointActionGr
 	private int[] agentsActions;
 	
 	/**
+	 * Constructs the state space domain using relevant info from the environment
 	 * @param actions
 	 */
 	public StateDomain_JointActionGrid (Info_Grid state){
@@ -57,17 +58,35 @@ public class StateDomain_JointActionGrid extends StateDomain<State_JointActionGr
 		//get the number of coordinates
 		limits =  state.currentJointCoord().get(0).getLimits();
 		int numberOfCoords = limits[0]*limits[1];
-
+		
+		int[] coord = new int[limits.length];
+		Vector<Object> jointAct = new Vector<Object>();
 		for (int k = 0; k < numAgents; k++) {
 			for (int l = 0; l < limits[0]; l++) {
+				coord[0] = l;
 				for (int m = 0; m < limits[1]; m++) {//for each joint coordinate
+					coord[1]= m;
+					
+					for (int i = 0; i < numAgents; i++) {
+						for(Object o : state.currentJointAction().get(i).getDomainSet())
+							jointAct.add(o);
+					}
+					
+					
+					
+					
+					
+					
 					for (int i = 0; i < numberOfActions; i++) {
 						State_JointActionGrid s = new State_JointActionGrid();
 						s.addFeature(l); s.addFeature(m);
-						int[] jointAct = toActions(i);
-						for (int j = 0; j < jointAct.length; j++) 
-							s.addFeature(jointAct[j]);
-						domain.add(s);
+						//TODO: fix this part
+						for (int j = 0; j < numAgents; j++) {
+							for(Object o : state.currentJointAction().get(j).getDomainSet()){
+								jointAct.add(o);
+							}
+							domain.add(s);
+						}
 					}
 				}
 			}
@@ -95,14 +114,14 @@ public class StateDomain_JointActionGrid extends StateDomain<State_JointActionGr
 		if(s.equals("class util.Info_Grid")){
 			Info_Grid grid = (Info_Grid) e;
 			Vector<int[]> coord = grid.currentArrayJointCoord();
-			Map<Vector<Object>,State_JointActionGrid>  jointA= mapping.get(coord);
+			//Map<Vector<Object>,State_JointActionGrid>  jointA= mapping.get(coord);
 			Vector<Action> vectA = grid.currentJointAction();
 			Vector<Object> vectO = new Vector<Object>();
 			for (int i=0; i< vectA.size(); i++) {
 				vectO.add(vectA.get(i));
 			}
-			mapping.get(arg0)
-			return jointA.get(vectO);
+			Map<Vector<Object>,State_JointActionGrid> m = mapping.get(coord);
+			return m.get(vectO);
 		}
 		else{
 			System.err.println("the state info is not of type NFGInfo, JointActionStateDomain cannot handdle this info type");

@@ -44,9 +44,13 @@ public class Info_NFG implements ObservableEnvInfo {
 
 		return jointAction;
 	}
-	
+
 	public Vector<Object> currentState(){
-		return null;
+		Vector<Object> o = new Vector<Object>();
+		for (Action c : jointAction) {
+			o.add(c.getCurrentState());
+		}
+		return o;
 	}
 	
 	public void updateJointAction(Vector<Action> j){

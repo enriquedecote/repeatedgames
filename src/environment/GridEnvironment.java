@@ -125,13 +125,15 @@ public class GridEnvironment implements Environment<Action> {
 					int randomA = random.nextInt(collision.size());//choose one agent randomly
 					for (int k = 0; k < collision.size(); k++) {
 						if(k != randomA){//the agent chosen randomly will stay in its new coordinates, the rest should return
-							coords.remove(collision.get(k));
-							coords.add(collision.get(k), jointCoord.get(collision.get(k)));
+							int g = collision.get(k);
+							coords.remove(g);
+							coords.add(g, jointCoord.get(g));
 						}
 					}
 				}else{//agent j was there previous time step
-					coords.remove(collision.get(flag));
-					coords.add(collision.get(flag), jointCoord.get(collision.get(flag)));
+					int g = collision.get(flag);
+					coords.remove(g);
+					coords.add(g, jointCoord.get(g));
 				}
 			}
 			collision.clear();

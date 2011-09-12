@@ -60,6 +60,9 @@ public class Info_Grid extends Info_NFG{
 		return a;
 	}
 	
+	/* (non-Javadoc)
+	 * @see util.Info_NFG#currentState()
+	 */
 	public Vector<Object> currentState(){
 		Vector<Object> o = new Vector<Object>();
 		for (Coordinate c : jointCoord) {
