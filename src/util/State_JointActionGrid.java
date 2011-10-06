@@ -54,4 +54,14 @@ public class State_JointActionGrid extends State {
 	public String name (Action a){
 		return a.getName();
 	}
+	
+	public void addFeature (Vector<Object> o){
+		features.add(o.clone());
+	}
+	public void addFeatureCoordinate (Vector<int[]> o){
+		Vector<int[]> coord = new Vector<int[]>();
+		for (int[] i : o) 
+			coord.add(i.clone());
+		features.add(coord);
+	}
 }

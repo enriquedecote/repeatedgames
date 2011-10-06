@@ -74,7 +74,8 @@ public class GridEnvironment implements Environment<Action> {
 		for (int i = 0; i < actions.size(); i++) {
 			Action_Grid action = (Action_Grid)actions.get(i);
 			Coordinate coord = jointCoord.get(i).clone();
-			Coordinate tmp;
+			Coordinate tmp = new Coordinate(coord.getLimits()[0], coord.getLimits()[1]);
+			int next;
 			
 			switch (ActionType.valueOf((String)action.getCurrentState())) {
 			case up:
@@ -83,8 +84,10 @@ public class GridEnvironment implements Environment<Action> {
 				break;
 				
 			case down:
-				tmp = coord;
-				tmp.changeToState(0,tmp.getCurrentState()[0] -1);
+				next = coord.getCurrentState()[0] - 1;
+				tmp.changeToState(coord.getCurrentState());
+				tmp.changeToState(0, next);
+				//System.out.println("down");
 				if((coord.getCurrentState()[0] -1) > -1 && !xWalls.containsKey(tmp))
 					coord.changeToState(0,coord.getCurrentState()[0] - 1);
 				break;
@@ -95,10 +98,12 @@ public class GridEnvironment implements Environment<Action> {
 				break;
 				
 			case left:
-				tmp = coord;
-				tmp.changeToState(1,tmp.getCurrentState()[1] -1);
-				if((coord.getCurrentState()[1] -1) > -1 && !yWalls.containsKey(tmp))
-					coord.changeToState(1,coord.getCurrentState()[1] - 1);
+				next = coord.getCurrentState()[1] - 1;
+				tmp.changeToState(coord.getCurrentState());
+				tmp.changeToState(1, next);
+				//System.out.println("left:" + next);
+				if(next >= 0 && !yWalls.containsKey(tmp))
+					coord.changeToState(1,next);
 				break;
 			}
 			coords.add(coord);
@@ -139,6 +144,10 @@ public class GridEnvironment implements Environment<Action> {
 			collision.clear();
 		}
 		jointCoord = coords;
+		for(Coordinate c: coords){
+			System.out.print("["+c.getCurrentState()[0]+","+c.getCurrentState()[1]+"] ");
+		}
+		System.out.println("");
 		envInfo.updateJointCoord(coords);
 		return envInfo;
 	}

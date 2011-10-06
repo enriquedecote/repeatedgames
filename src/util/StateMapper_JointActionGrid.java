@@ -55,14 +55,16 @@ public class StateMapper_JointActionGrid extends StateMapper<State_JointActionGr
 	public State_JointActionGrid getState(ObservableEnvInfo info){
 		Info_Grid grid = (Info_Grid) info;
 		Vector<Object> feats = new Vector<Object>();
-		Vector<int[]> vectC = grid.currentArrayJointCoord();
+		for(int[] i : grid.currentArrayJointCoord()){
+			for(int j : i)
+				feats.add(j);
+		}
 		Vector<Action> vectA = grid.currentJointAction();
-		for (int i=0; i< vectC.size(); i++) {
-			feats.add(vectC.get(i));
+		Vector<Object> vectO = new Vector<Object>();
+		for (Action a : vectA) {
+			vectO.add(a.getCurrentState());
 		}
-		for (int i=0; i< vectA.size(); i++) {
-			feats.add(vectA.get(i));
-		}
+		feats.add(vectO);
 		return mapping.get(feats);
 	}
 	

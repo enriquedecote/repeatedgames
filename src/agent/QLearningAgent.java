@@ -97,6 +97,8 @@ public class QLearningAgent extends Agent {
 			Double maxQ = null;
 			Object action = null;
 			//get action=arg max_{a} and maxQ=max_{a}
+			if(!Q.containsKey(currentState))
+				System.out.println("state: " + currentState.getFeatures());
 			for(Object o : Q.get(currentState).keySet()){
 				if(Q.get(currentState).get(o) >= val){
 					action = o;
