@@ -49,7 +49,7 @@ cd $RESULTS/$1_$5;
 # 2. Graph title
 # 3. Every
 # 4. Optimal baseline
-../2_gen_graphs.sh $1 $1 100 3;
+../2_gen_graphs.sh $1 $1 200 3;
 
 #echo "Compressing files...";
 #cd $RESULTS;

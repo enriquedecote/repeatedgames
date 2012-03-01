@@ -64,8 +64,8 @@ import util.VectorQueue;
 public class BayesMDP extends Agent {
 	
 	private static final double GAMMA = 1;
-	private State state;
-	protected Map<Integer,Object> strategy;
+
+	protected Map<Integer,Object> strategy = new HashMap<Integer, Object>();	
 	private Random r;
 	
 	//MDP parameters
@@ -78,8 +78,8 @@ public class BayesMDP extends Agent {
 	private String gameName;
 	private int currState = 0;
 	private boolean searchingIndiffPoint = false;
-	private int actionR; //for best equilibrium r/k
-	private int totalActions;//for best equilibrium = k-r
+	private int[] maxWstrat;//for best equilibrium r/k; [0]=r,[1]=k-r
+	private int totalActions;//for best equilibrium = k
 	
 	//given a state, returns a set of pairs <action,value>
 	Map<Integer,Map<Integer,Double>> Q;
@@ -90,7 +90,6 @@ public class BayesMDP extends Agent {
 	public void init(Element e, int id){
 		super.init(e, id);
 		numActions = currentAction.getDomainSet().size();
-
 		gameName = e.getAttribute("game");
 		oppActions = Integer.valueOf(e.getAttribute("oppActions"));
 		getWpoints(System.getProperty("user.home") + "/programing/gambitGames/" + gameName);
@@ -104,7 +103,6 @@ public class BayesMDP extends Agent {
 				g = mdp.getGainOptimalReward();
 			}
 		}
-		
 		constructBayesMDP(wPointsVector.get(maxW));
 	}
 	// constructor
@@ -131,10 +129,10 @@ public class BayesMDP extends Agent {
 		for (Action act : currJointAct) 
 			currO.add(act.getCurrentState());
 
-		int currReward = reward.getReward(curr, currO, agentId);
+		int currReward = (int)reward.getReward(curr, currO, agentId);
 		
 		//update state
-		currState = nextState(currState, (Integer)currentAction.getCurrentState());
+		currState = nextState(currState, (int)(Integer)currentAction.getCurrentState());//TODO:check integrity
 		
 		if(!isPredictedReward(currReward) || searchingIndiffPoint)
 			find_w();
@@ -225,6 +223,11 @@ public class BayesMDP extends Agent {
 	 * @param b = k-r
 	 */
 	public void constructBayesMDP(int[] mixedStrat){
+		resetVars();
+		maxWstrat = mixedStrat;
+		for (int i : mixedStrat) 
+			totalActions += i;
+
 		for (int i = 0; i < mixedStrat.length; i++) 
 			numStates *= (mixedStrat[i]+1);
 
@@ -248,17 +251,22 @@ public class BayesMDP extends Agent {
 
 			}
 		}
+		averageRewardVI();
 	}
 	
+	private void resetVars() {
+		numStates = 1;
+		totalActions = 0;
+	}
 	/**
 	 * Uses the mixed strategy r/k to check next state and validity using eq. 12 and 13
 	 * @param s state
 	 * @param a chosen action
-	 * @param inc increment (the number of times the most significant action is played (e.g. 4/7, inc=4)
+	 * @param inc increment (the number of times action a=0 is played (e.g. 4/7, inc=4)
 	 * @return the next state
 	 */
-	private int nextState(int s, int a, int inc){
-		s = s + 1 + (int)Math.pow(inc, a);
+	private int nextState(int s, int a){
+		s = s + (int)Math.pow(maxWstrat[0]+1, a);
 		//if(action==0) s = s + a;
 		//if(action==1) s = s + 1;
 		if(s >= numStates)
@@ -267,7 +275,7 @@ public class BayesMDP extends Agent {
 	}
 	
 	public double expUtility(int s, int a){
-		Vector<Integer> br = BR(s);
+		Vector<Integer> br = BR(s);//this is the opponent's BR in state s
 		double[] strat = new double[oppActions];
 		for (int i = 0; i < strat.length; i++) {
 			if(br.contains(i))
@@ -291,6 +299,11 @@ public class BayesMDP extends Agent {
 		return null;
 	}
 	
+	/**
+	 * Calculates the opponent's BR to state s=(model of bayesMDP)
+	 * @param s state
+	 * @return a vector of actions that maximize its obj. function
+	 */
 	public Vector<Integer> BR(int s){
 		//get planner strategy
 		double[] strat = stateToStrat(s);
@@ -324,8 +337,8 @@ public class BayesMDP extends Agent {
 		int[] strat = new int[numActions];
 	       int i=0;
 	       while (n > 0) {
-	          strat[i] = n % numActions;
-	          n = n/numActions;
+	          strat[i] = (n % (maxWstrat[i]+1))+ strat[i];
+	          n = n/(maxWstrat[i]+1);
 	          i++;
 	       }
 	       assert(strat.length == numActions);
@@ -376,7 +389,7 @@ public class BayesMDP extends Agent {
 			  //actions to double
 			  Map<Integer,Double>Qaux = new HashMap<Integer,Double>();
 			  
-			  for (int j=0; j< numActions; i++) 
+			  for (int j=0; j< numActions; j++) 
 				  Qaux.put(j, 0.0);
 			  Q.put(i, Qaux);
 		  }	
@@ -399,8 +412,8 @@ public class BayesMDP extends Agent {
 						sum += mdp.getTransition(s, a, s1) * V.get(s1);
 					  }
 					  double total = mdp.getRewardEntry(s, a, nextState(s,a)) + GAMMA * sum;
-					  total -= p;//this is the average dicount for containing the sum (see Mahadevan Av. reward)
-					  p = p + (1/counter+1)*(mdp.getRewardEntry(s, a, nextState(s,a))-p);//iterative mean
+					  total -= p;//this is the average discount for containing the sum (see Mahadevan Av. reward)
+					  p = p + (1/(counter+1))*(mdp.getRewardEntry(s, a, nextState(s,a))-p);//iterative mean
 					  if(s!=numStates-1)//the last state (which is recurring under any policy)
 						  Q.get(s).put(a, total);
 					  else
@@ -411,13 +424,13 @@ public class BayesMDP extends Agent {
 					  }
 					  ///c1++;
 				  }
-				  error = Math.max(error, Math.abs(Vstate - V.get(state)));
+				  error = Math.max(error, Math.abs(Vstate - V.get(s)));
 				  V.put(s, Vstate);
 				  //c++;
-				  //System.out.println("+++"+c);
+				  System.out.println(error);
 			  }	
 			  counter++;
-			  //System.out.println(counter);
+			  System.out.println(counter);
 		  }
 		  
 		  //System.out.println(counter);
