@@ -27,7 +27,7 @@ import java.util.Vector;
 
 public  class OpponentModel {
 		protected int numActions;
-		protected HashMap<Action, Integer> strat;
+		protected HashMap<Object, Integer> strat;
 		protected int agentId;
 		protected Vector<Object> sequence = new  Vector<Object>();
 		protected Deque<Object> pastActions; // this player's actions done in the past, with a window of size CAPACITY
@@ -36,7 +36,8 @@ public  class OpponentModel {
 		public OpponentModel(int actions, int id){
 			this.numActions = actions;
 			this.agentId = id;
-			strat = new HashMap<Action, Integer>();
+			strat = new HashMap<Object, Integer>();
+			
 			pastActions = new ArrayDeque<Object>(CAPACITY);
 		}
 		
@@ -46,7 +47,8 @@ public  class OpponentModel {
 		 */
 		public void lastAction(Action hisAction){
 			Object hisOaction = hisAction.getCurrentState();
-			strat.put(hisAction, strat.get(hisAction)+1);
+			int num = (strat.containsKey(hisOaction)) ? strat.get(hisOaction)+1 : 1;
+			strat.put(hisOaction, num);
 			sequence.add(hisOaction);
 			if(pastActions.size() >= CAPACITY)
 				pastActions.removeLast();
@@ -57,12 +59,14 @@ public  class OpponentModel {
 			double[] s = new double[numActions];
 			
 			int sum=0;
-			for (Action a : strat.keySet())
+			for (Object a : strat.keySet())
 				sum += strat.get(a);
 			
 			int i = 0;
-			for (Action a : strat.keySet())
+			for (Object a : strat.keySet()){
 				s[i] = (double)strat.get(a)/(double)sum;
+				i++;
+			}
 					
 			assert(s.length == numActions);	    
 			return s;

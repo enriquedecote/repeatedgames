@@ -47,14 +47,14 @@ public class FictitiousPlay extends Agent {
 	VectorQueue<State> memory = new VectorQueue<State>(1);
 	private OpponentModel opponents[];
 	private int numPlayers = 0;
-	private int[] oppNumActions;
+	private int oppNumActions;
 	
 	public void init(Element e, int id){
 		super.init(e, id);
 		
 		//initialize variables
 		numPlayers = Integer.valueOf(e.getAttribute("players"));
-		oppNumActions = reward.getNumActions();
+		oppNumActions = Integer.valueOf(e.getAttribute("oppActions"));
 		
 		//initialize structures
 				opponents = new OpponentModel[numPlayers-1];
@@ -65,7 +65,7 @@ public class FictitiousPlay extends Agent {
 					if(j==agentId)
 						a--;
 					else{
-						opponents[a] = new OpponentModel(oppNumActions[j],j);
+						opponents[a] = new OpponentModel(oppNumActions,j);
 					}
 					a++;
 				}
@@ -109,7 +109,7 @@ public class FictitiousPlay extends Agent {
 	private void computeAction() {
 		assert(opponents.length==1); //Works only for 2 players
 		Vector<Integer> br = BR(opponents[0].currentStrategy());
-		double[] strat = new double[this.aDomain.getActionSet().size()];
+		double[] strat = new double[currentAction.getDomainSet().size()];
 		for (int i = 0; i < strat.length; i++) {
 			if(br.contains(i))
 				strat[i] = (double)1/(double)br.size();
@@ -187,9 +187,7 @@ public class FictitiousPlay extends Agent {
 		String ret =	System.getProperty("line.separator");
 		slog = slog.concat("\n+++ AGENT: " + this.getClass()+ret);
 		slog = slog.concat("Action type: " + currentAction.getClass()+ret);
-		slog = slog.concat("Policy: " + policy.getClass()+ret);
-
-		
+	
 		log.recordConfig(slog);
 	}
 	

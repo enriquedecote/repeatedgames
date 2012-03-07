@@ -92,7 +92,7 @@ public class BayesMDP extends Agent {
 		numActions = currentAction.getDomainSet().size();
 		gameName = e.getAttribute("game");
 		oppActions = Integer.valueOf(e.getAttribute("oppActions"));
-		getWpoints(System.getProperty("user.home") + "/programing/gambitGames/" + gameName);
+		getWpoints(System.getProperty("user.home") + "/programing/gamutGames/" + gameName);
 		
 		double g = 0; //gain optimal max value
 		int maxW=0;
@@ -134,15 +134,16 @@ public class BayesMDP extends Agent {
 
 		int currReward = (int)reward.getReward(curr, currO, agentId);
 		
-		//update state
-		currState = nextState(currState, (int)(Integer)currentAction.getCurrentState());//TODO:check integrity
-		
 		if(!isPredictedReward(currReward) || searchingIndiffPoint)
 			find_w();
-		else{
+		
+		//update state
+		System.out.println("["+currState+":"+currentAction.getCurrentState()+"]"+currReward);
+		currState = nextState(currState, (int)(Integer)currentAction.getCurrentState());
+
 			//choose a new action
 			currentAction.changeToState(strategy.get(currState)); 
-		}
+		
 		
 		round++;
 		//memory.offerFirst(currentState);
@@ -151,7 +152,7 @@ public class BayesMDP extends Agent {
 	}
 	
 	private boolean isPredictedReward(int currRew){
-		if(currState == 0)
+		if(currState == 0 || currState == numStates-1)
 			return true;
 		else{
 			double expRew = mdp.getRewardEntry(currState, (Integer)currentAction.getCurrentState(), nextState(currState,(Integer)currentAction.getCurrentState()));
@@ -178,7 +179,7 @@ public class BayesMDP extends Agent {
         try {
         	//String[] cmd = new String[]{"/bin/sh", "-c", "gambit-enummixed","<" + gameName};
         	//String cmd = "/bin/sh -c 'gambit-enummixed < "+ gameName+"'";
-        	String cmd = "/home/enrique/programing/gambitGames/launch.sh " +gameName;
+        	String cmd = "/home/enrique/programing/gamutGames/launch.sh " +gameName;
         	Process p = Runtime.getRuntime().exec(cmd);
             //Process p = Runtime.getRuntime().exec("/usr/bin/gambit-enummixed -q < " + gameName+ "> sol.txt");
         	//Process p = Runtime.getRuntime().exec("cat " + gameName+ "> sol.txt");
@@ -192,7 +193,6 @@ public class BayesMDP extends Agent {
             //System.out.println(stdInput.readLine());
             while ((s = stdInput.readLine()) != null) {
                 System.out.println(s);
-                int from = 0;
                 int action = 0;
                 int[] actions = new int[numActions];
                 s = s.substring(3); //get the "NE," substring out of the way
@@ -270,9 +270,7 @@ public class BayesMDP extends Agent {
 	 */
 	private int nextState(int s, int a){
 		s = s + (int)Math.pow(maxWstrat[0]+1, a);
-		//if(action==0) s = s + a;
-		//if(action==1) s = s + 1;
-		if(s >= numStates)
+		if(s >= numStates-1)
 			s=0;
 		return s;
 	}
@@ -448,7 +446,7 @@ public class BayesMDP extends Agent {
 		 * where the stop criterion (eq. 8.5.4) is max_s-min_s' 
 		 */
 		public void averageRewardVI(){
-			  final double EPSILON = 0.01; 
+			  final double EPSILON = 0.1; 
 			  double sp = 12;
 			  double spMin = -9999;
 			  double spMax = -9999;
@@ -493,9 +491,9 @@ public class BayesMDP extends Agent {
 					  V.put(s, Vstate);
 				  }	
 				  sp = spMax-spMin;
-				  System.out.println(sp);
+				  //System.out.println(sp);
 				  counter++;
-				  System.out.println("counter:"+counter);
+				  //System.out.println("counter:"+counter);
 			  }
 			  
 			  //System.out.println(counter);
@@ -508,10 +506,6 @@ public class BayesMDP extends Agent {
 		String ret =	System.getProperty("line.separator");
 		slog = slog.concat("\n+++ AGENT: " + this.getClass()+ret);
 		slog = slog.concat("Action type: " + currentAction.getClass()+ret);
-		//slog = slog.concat("Policy: " + policy.getClass()+ret);
-		slog = slog.concat("\t Q table init: " + Qinit+ret);
-		//slog.concat("Q-table:\n" + Q.toString());
-		slog = slog.concat("Q-table:" + ret);
 
 		log.recordConfig(slog);
 	}

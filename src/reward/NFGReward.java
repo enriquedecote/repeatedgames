@@ -52,7 +52,7 @@ public class NFGReward implements Reward{
 	Map<String,Double> r3 = new HashMap<String, Double>();
 	public enum Game
 	{
-	    PD, CHICKEN, BOS, FOURSEVENTHS; 
+	    PD, CHICKEN, BOS, FOURSEVENTHS, CONSTANTSUM; 
 	}
 
 	public NFGReward () {
@@ -119,6 +119,21 @@ public class NFGReward implements Reward{
 			rewards.put(jointA2, r2);
 
 			jointA3.add(1); jointA3.add(1); r3.put("row", -2.0); r3.put("col", 2.0);
+			rewards.put(jointA3, r3);
+			break;
+			
+		case CONSTANTSUM: //0 = D, 1 = C
+
+			jointA.add(0); jointA.add(0); r.put("row", 0.0); r.put("col", 100.0);
+			rewards.put(jointA, r);
+
+			jointA1.add(0); jointA1.add(1); r1.put("row", 63.0); r1.put("col", 37.0);
+			rewards.put(jointA1, r1);
+
+			jointA2.add(1); jointA2.add(0); r2.put("row", 56.0); r2.put("col",44.0);
+			rewards.put(jointA2, r2);
+
+			jointA3.add(1); jointA3.add(1); r3.put("row", 22.0); r3.put("col", 78.0);
 			rewards.put(jointA3, r3);
 			break;
 			

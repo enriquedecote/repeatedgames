@@ -10,7 +10,7 @@
 	<BayesMDP name="BayesMDP" policy="_" actionType="NINTACTIONS" numActions="2" stateType="_" game="4sevenths.nfg" oppActions="2">
 	</BayesMDP></Player>
   <Player>
-	<FP  name="FP" policy="_" actionType="NINTACTIONS" numActions="2" stateType="_" oppActions="2">
+	<FP  name="FP" policy="_" actionType="NINTACTIONS" numActions="2" stateType="_" oppActions="2" players="2">
 	</FP></Player>
 </Players>
 </Environment>
