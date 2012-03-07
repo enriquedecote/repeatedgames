@@ -21,162 +21,54 @@ package util;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Vector;
 
-public class OpponentModel {
-		int numActions;
-		private double stick = 6; //values range from 0 to 6
-		//private Map<Boolean, Double> followIndex = new HashMap<Boolean, Double>();
-		private int strat[];
-		private int agentId;
-		private Vector<Integer> sequence = new  Vector<Integer>();
-		private Deque<Integer> pastActions; // this player's actions done in the past, with a window of size CAPACITY
-		private static final int CAPACITY = 10;
-		private static final double GAMMA = 0.05;
-		private static final double RHO = 0.5;
-		private static final double TRESHOLD = (Math.pow(6, RHO)/(1-GAMMA))*0.3; //this is 0.3 from max followIndex, anything bellow this is considered follower
-		private int myLastActions[]; // the leader (e.g. TeamUP) actions done in the past
+public  class OpponentModel {
+		protected int numActions;
+		protected HashMap<Action, Integer> strat;
+		protected int agentId;
+		protected Vector<Object> sequence = new  Vector<Object>();
+		protected Deque<Object> pastActions; // this player's actions done in the past, with a window of size CAPACITY
+		protected static final int CAPACITY = 10;
 		
 		public OpponentModel(int actions, int id){
 			this.numActions = actions;
 			this.agentId = id;
-			strat = new int[numActions];
-			myLastActions = new int[2];
-			java.util.Arrays.fill(strat,0);
-			pastActions = new ArrayDeque<Integer>(CAPACITY);
-			java.util.Arrays.fill(myLastActions,-1);
+			strat = new HashMap<Action, Integer>();
+			pastActions = new ArrayDeque<Object>(CAPACITY);
 		}
 		
 		/**
 		 * records the last action pair
 		 * @param hisAction
-		 * @param myAction
 		 */
-		public void lastAction(int hisAction, int myAction){
-			strat[hisAction]++;
-			sequence.add(hisAction);
+		public void lastAction(Action hisAction){
+			Object hisOaction = hisAction.getCurrentState();
+			strat.put(hisAction, strat.get(hisAction)+1);
+			sequence.add(hisOaction);
 			if(pastActions.size() >= CAPACITY)
 				pastActions.removeLast();
-			pastActions.addFirst(hisAction);
-			myLastActions[1] = myLastActions[0];
-			myLastActions[0] = myAction;
+			pastActions.addFirst(hisOaction);
 		}
 		
-		protected void actionCorr(int myAction, int otherOpponent, int hisOwnAction){
-		}
-		
-		public boolean isSticking(){
-			return(stickIndex() < TRESHOLD);
-		}
-		
-		
-		/**
-		 * computes the followIndex of a given sequence
-		 * @param opponentSeq the sequence to compare to
-		 * @return the normalized followIndex of the its sequence and the argument's sequence
-		 * @TODO: work out the co-domain (range) of the function 
-		 */
-		public double followIndex(Vector<Integer> mySeq, Vector<Integer> otherSeq){
-			double fIndex = 0;
-			double sumG = 0;
-			double dif;
-			double dif1;
-			double dif2;
-			double norm;
-			int t = 0;
-			assert(this.sequence.size() == mySeq.size() && this.sequence.size() == otherSeq.size());
-			for (int i = 0; i < sequence.size(); i++) 
-				sumG += Math.pow(GAMMA, i);
+		public double[] currentStrategy(){
+			double[] s = new double[numActions];
 			
-			for(int i = sequence.size()-1; i >0 ; i--) {
-				dif1 = Math.abs((sequence.get(i) -  mySeq.get(i-1) + 6) % 12);
-				if(dif1 > 6)
-					dif1 = 12 - dif1;
-				dif2 = Math.abs((sequence.get(i) - otherSeq.get(i-1) + 6) % 12);
-				if(dif2 > 6)
-					dif2 = 12 - dif2;
-				dif = Math.min(dif1, dif2);
-				//if(t==0) System.out.print(dif+": ");
-				dif = Math.pow(dif, RHO);
-				norm = Math.pow(GAMMA, t) / sumG;
-				fIndex += norm * dif;
-				t++;
-			}
-			//System.out.println(fIndex);
-			return fIndex;
-		}
-		
-		/**
-		 * computes the followIndex of a given sequence for a given opponent. 
-		 * The co-domain (range) of the function is [pow(6,RHO),0]
-		 * @param opponentSeq the sequence to compare to
-		 * @return the normalized followIndex of the its sequence and the argument's sequence
-		 */
-		public double followIndex(Vector<Integer> otherSeq){
-			double fIndex = 0;
-			double sumG = 0;
-			double dif;
-			double norm;
-			int t = 0;
-			assert(this.sequence.size() ==  otherSeq.size());
-			for (int i = 0; i < sequence.size(); i++) 
-				sumG += Math.pow(GAMMA, i);
+			int sum=0;
+			for (Action a : strat.keySet())
+				sum += strat.get(a);
 			
-			for(int i = sequence.size()-1; i >0 ; i--) {
-				dif = Math.abs((sequence.get(i) - otherSeq.get(i-1) + 6) % 12);
-				if(dif > 6)
-					dif = 12 - dif;
-				//if(t==0) System.out.print(dif+": ");
-				dif = Math.pow(dif, RHO);
-				norm = Math.pow(GAMMA, t) / sumG;
-				fIndex += norm * dif;
-				t++;
-			}
-			//System.out.println(fIndex);
-			return fIndex;
+			int i = 0;
+			for (Action a : strat.keySet())
+				s[i] = (double)strat.get(a)/(double)sum;
+					
+			assert(s.length == numActions);	    
+			return s;
 		}
-		
-		/**
-		 * computes its stickIndex
-		 * @return the normalized stickness value
-		 */
-		public double stickIndex(){
-			double sIndex = 0;
-			double sumG = 0;
-			double dif;
-			double norm;
-			int t = 0;
-			for (int i = 0; i < sequence.size(); i++) 
-				sumG += Math.pow(GAMMA, i);
-			
-			for(int i = sequence.size()-1; i >0 ; i--) {
-				dif = Math.min(Math.abs(sequence.get(i) - sequence.get(i-1)), 
-						Math.abs(sequence.get(i-1) - sequence.get(i)));
-				if(dif > 6)
-					dif = 12 - dif;
-				//if(t==0) System.out.print(dif+": ");
-				dif = Math.pow(dif,RHO);
-				norm = Math.pow(GAMMA, t) / sumG;
-				sIndex += norm * dif;
-				t++;
-			}
-			//System.out.println(sIndex);
-			return sIndex;
-		}
-		
-		public Vector<Integer> getSequence(){
-			return sequence;
-		}
-		
-		public double threashold(){
-			return TRESHOLD;
-		}
-		
-		protected boolean isLeader(){
-			// TODO Auto-generated method stub
-			return false;
-		}
-		public int currentAction(){
+
+		public Object currentAction(){
 			return pastActions.getFirst();
 		}
 		public int getId(){

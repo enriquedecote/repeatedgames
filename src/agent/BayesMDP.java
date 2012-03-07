@@ -113,6 +113,8 @@ public class BayesMDP extends Agent {
 	// constructor
 	public BayesMDP(){		
 	}
+	
+
 
 	@Override
 	// gets current action of agent
@@ -124,6 +126,7 @@ public class BayesMDP extends Agent {
 	public void update(ObservableEnvInfo curr) {
 		Info_NFG info = (Info_NFG)curr;
 		Vector<Action> currJointAct =  stateMapper.getActions(curr);
+		currentState = (State) stateMapper.getState(curr);
 		Vector<Object> currO = new Vector<Object>();
 		
 		for (Action act : currJointAct) 
@@ -142,7 +145,7 @@ public class BayesMDP extends Agent {
 		}
 		
 		round++;
-		memory.offerFirst(currentState);
+		//memory.offerFirst(currentState);
 		
 		//log.flush();
 	}
@@ -294,10 +297,6 @@ public class BayesMDP extends Agent {
 		return util;
 	}
 	
-	public float[] opponentModel(int s){
-		//TODO: implement
-		return null;
-	}
 	
 	/**
 	 * Calculates the opponent's BR to state s=(model of bayesMDP)
@@ -333,6 +332,7 @@ public class BayesMDP extends Agent {
 		return maxAct;
 	}
 	
+	//state s=0 is the equilibrium strategy
 	private int[] stateToActions(int n){
 		int[] strat = new int[numActions];
 	       int i=0;
@@ -341,6 +341,10 @@ public class BayesMDP extends Agent {
 	          n = n/(maxWstrat[i]+1);
 	          i++;
 	       }
+	       
+	       for (int j = 0; j < strat.length; j++) 
+			strat[j] += maxWstrat[j];
+		
 	       assert(strat.length == numActions);
 	       return strat;
 	}
@@ -349,12 +353,12 @@ public class BayesMDP extends Agent {
 		int[] aux = stateToActions(n);
 		double[] strat = new double[numActions];
 		
-		if(n == 0){
+/*		if(n == 0){
 			for (int i = 0; i < strat.length; i++) {
 				strat[i] = (double)1/(double)numActions;
 			}
 			return strat;
-		}
+		}*/
 			
 			
 		int sum=0;
@@ -375,7 +379,7 @@ public class BayesMDP extends Agent {
 	 * if there is a state s E S that is reachable from every other state under all stationary policies.
 	 * The recurring state in BayesMDP case is always the last one (i.e. s=numStates)
 	 */
-	public void averageRewardVI(){
+	public void averageRewardVIJalali(){
 		  final double EPSILON = 0.01; 
 		  double error = 12;
 		  double p=0;//for iterative version of arithmetic mean
@@ -430,7 +434,7 @@ public class BayesMDP extends Agent {
 				  System.out.println(error);
 			  }	
 			  counter++;
-			  System.out.println(counter);
+			  System.out.println("counter:"+counter);
 		  }
 		  
 		  //System.out.println(counter);
@@ -438,21 +442,77 @@ public class BayesMDP extends Agent {
 		  mdp.setGainOptimalReward(V.get(0));
 		  
 	  }
-		  
+		
+	 /**
+		 * Implements av. reward VI as described in Puterman'94, pg. 364
+		 * where the stop criterion (eq. 8.5.4) is max_s-min_s' 
+		 */
+		public void averageRewardVI(){
+			  final double EPSILON = 0.01; 
+			  double sp = 12;
+			  double spMin = -9999;
+			  double spMax = -9999;
+			  Vector<Object> actions = currentAction.getDomainSet();
+			  //states to double
+			  Map<Integer,Double> V = new HashMap<Integer,Double>(numActions);
+			  
+			  //step 1
+			  for (int i=0; i< numStates; i++)
+				  V.put(i, 0.0);
+			  
+			  int counter = 0;
+			  
+			  //step 3 (stop criterion)
+			  while (sp > EPSILON) {
+				  spMax = -9999;
+				  spMin = 9999;
+				  //step 2
+				  for (int s=0; s< numStates; s++) {
+					  double Vstate = -9999;
+					  
+					  for (int a=0; a< numActions; a++) {
+						  //expected over future states
+						  double sum = 0;
+						  //System.out.println(probs.size());
+						  for (int s1 = 0; s1 < numStates; s1++) {
+							sum += mdp.getTransition(s, a, s1) * V.get(s1);
+						  }
+						  double total = mdp.getRewardEntry(s, a, nextState(s,a)) + GAMMA * sum;
+						  
+						  //the max_a part
+						  if(total > Vstate){
+							  Vstate = total;
+							  strategy.put(s, a);
+						  }
+					  }
+					  double spTmp = Math.max(sp, Math.abs(Vstate - V.get(s)));
+					  //the max_s part for sp
+					  if(spTmp > spMax) spMax = spTmp;
+					  if(spTmp < spMin) spMin = spTmp;
+					
+					  V.put(s, Vstate);
+				  }	
+				  sp = spMax-spMin;
+				  System.out.println(sp);
+				  counter++;
+				  System.out.println("counter:"+counter);
+			  }
+			  
+			  //System.out.println(counter);
+			  //System.out.println(strattoString());
+			  mdp.setGainOptimalReward(V.get(0));
+			  
+		  }
 	public void recordToLogger(ExperimentLogger log){
 		String slog = new String();
 		String ret =	System.getProperty("line.separator");
 		slog = slog.concat("\n+++ AGENT: " + this.getClass()+ret);
 		slog = slog.concat("Action type: " + currentAction.getClass()+ret);
-		slog = slog.concat("Policy: " + policy.getClass()+ret);
+		//slog = slog.concat("Policy: " + policy.getClass()+ret);
 		slog = slog.concat("\t Q table init: " + Qinit+ret);
 		//slog.concat("Q-table:\n" + Q.toString());
 		slog = slog.concat("Q-table:" + ret);
-		for (Integer state : Q.keySet()) {
-			for (Object action : Q.get(state).keySet()) {
-				slog = slog.concat("["+state+","+action.toString()+"]:"+Q.get(state).get(action)+ret);
-			}
-		}
+
 		log.recordConfig(slog);
 	}
 	

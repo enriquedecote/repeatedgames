@@ -32,7 +32,7 @@ import org.w3c.dom.Element;
 import util.Action;
 import util.ActionDomain_LeaderFollower;
 import util.ObservableEnvInfo;
-import util.OpponentModel;
+import util.TeamUPOpponentModel;
 import util.Strategy;
 import util.StrategyState;
 
@@ -59,7 +59,7 @@ public class TeamUP extends Agent {
 	private Strategy currentStrategy;
 	StrategyState lastState;
 	StrategyState currentState;
-	private OpponentModel opponents[];
+	private TeamUPOpponentModel opponents[];
 	private int timeStep;
 	private File file;
 	private File tempFile;
@@ -103,7 +103,7 @@ public class TeamUP extends Agent {
 		//initialize structures
 		initLog();
 		timeStep = 0;
-		opponents = new OpponentModel[numPlayers-1];
+		opponents = new TeamUPOpponentModel[numPlayers-1];
 		
 		//create the opponent models with correct action number and their id tag
 		int a=0;
@@ -111,7 +111,7 @@ public class TeamUP extends Agent {
 			if(j==agentId)
 				a--;
 			else{
-				opponents[a] = new OpponentModel(oppNumActions[j],j);
+				opponents[a] = new TeamUPOpponentModel(oppNumActions[j],j);
 			}
 			a++;
 		}

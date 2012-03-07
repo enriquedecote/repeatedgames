@@ -27,15 +27,15 @@ import java.util.Set;
 public class ActionDomain_LeaderFollower implements StateSet<StrategyState> {
 	protected Set<StrategyState> states;
 	
-	public ActionDomain_LeaderFollower(Set<OpponentModel> players){
+	public ActionDomain_LeaderFollower(Set<TeamUPOpponentModel> players){
 		Init(players);
 	}
 	
-	public ActionDomain_LeaderFollower(OpponentModel[] opponents){
+	public ActionDomain_LeaderFollower(TeamUPOpponentModel[] opponents){
 		Init(transformOppToSet(opponents));
 	}
 	
-	private void Init(Set<OpponentModel> players){
+	private void Init(Set<TeamUPOpponentModel> players){
 		states = new LinkedHashSet<StrategyState>();
 		//construct each each strategyState
 		Strategy st1 = new Strategy("O");
@@ -77,8 +77,8 @@ public class ActionDomain_LeaderFollower implements StateSet<StrategyState> {
 		return null;
 	}
 
-	public Set<OpponentModel> transformOppToSet(OpponentModel[] opponents){
-		Set<OpponentModel> players = new LinkedHashSet<OpponentModel>();
+	public Set<TeamUPOpponentModel> transformOppToSet(TeamUPOpponentModel[] opponents){
+		Set<TeamUPOpponentModel> players = new LinkedHashSet<TeamUPOpponentModel>();
 		for (int i =0; i < opponents.length; i++) 
 			players.add(opponents[i]);
 		return players;

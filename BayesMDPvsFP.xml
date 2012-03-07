@@ -10,9 +10,8 @@
 	<BayesMDP name="BayesMDP" policy="_" actionType="NINTACTIONS" numActions="2" stateType="_" game="4sevenths.nfg" oppActions="2">
 	</BayesMDP></Player>
   <Player>
-	<q-learning epsilon="0.1" epsilonDecay="POLY" alpha="0.1"
-		alphaDecay="_" gamma="0.95" policy="EGREEDY" name="q-learning" actionType="NINTACTIONS" numActions="2" stateType="_" Qinit="0">
-	</q-learning></Player>
+	<FP  name="FP" policy="_" actionType="NINTACTIONS" numActions="2" stateType="_" oppActions="2">
+	</FP></Player>
 </Players>
 </Environment>
 <Experiment iterations="10000" runs="5">

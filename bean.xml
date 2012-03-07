@@ -22,6 +22,7 @@
 <beans>
 <bean id="q-learning" class="agent.QLearningAgent" singleton = "false"></bean>
 <bean id="BayesMDP" class="agent.BayesMDP" singleton = "false"></bean>
+<bean id="FP" class="agent.FictitiousPlay" singleton = "false"></bean>
 <bean id="TeamUP" class="agent.TeamUP" singleton = "false"></bean>
 <bean id ="coordState" class = "util.CoordinateState"></bean>
 <bean id ="gridRewards" class = "reward.GridReward"></bean>
