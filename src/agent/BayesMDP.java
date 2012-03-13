@@ -63,11 +63,11 @@ import util.VectorQueue;
  */
 public class BayesMDP extends Agent {
 	
-	private static final double GAMMA = 1;
+	private static double GAMMA = 1;
 
 	protected Map<Integer,Object> strategy = new HashMap<Integer, Object>();	
 	private Random r;
-	
+	private boolean border=false;
 	//MDP parameters
 	private float epsilon;
 	private MDPModel mdp;
@@ -134,15 +134,16 @@ public class BayesMDP extends Agent {
 
 		int currReward = (int)reward.getReward(curr, currO, agentId);
 		
+		//if(currJointAct. || searchingIndiffPoint)		
 		if(!isPredictedReward(currReward) || searchingIndiffPoint)
 			find_w();
 		
 		//update state
-		System.out.println("["+currState+":"+currentAction.getCurrentState()+"]"+currReward);
+		//System.out.println("["+currState+":"+currentAction.getCurrentState()+"]"+currReward);
 		currState = nextState(currState, (int)(Integer)currentAction.getCurrentState());
 
-			//choose a new action
-			currentAction.changeToState(strategy.get(currState)); 
+		//choose a new action
+		currentAction.changeToState(strategy.get(currState)); 
 		
 		
 		round++;
@@ -173,7 +174,7 @@ public class BayesMDP extends Agent {
 	 * @return A vector a of strategies (each expressed as rational numbers) 
 	 * containing all strategies with indifference points
 	 */
-	public void getWpoints(String gameName){
+	private void getWpoints(String gameName){
 		String s = null;
 
         try {
@@ -225,7 +226,7 @@ public class BayesMDP extends Agent {
 	 * @param a = r
 	 * @param b = k-r
 	 */
-	public void constructBayesMDP(int[] mixedStrat){
+	private void constructBayesMDP(int[] mixedStrat){
 		resetVars();
 		maxWstrat = mixedStrat;
 		for (int i : mixedStrat) 
@@ -244,7 +245,8 @@ public class BayesMDP extends Agent {
 				for (int s1 = 0; s1 < numStates; s1++) {//for all states s1
 					if(s1 == nextState(s,i)){
 						mdp.setTransition(s, i, s1, 1);
-						mdp.setRewardEntry(s, i, s1, expUtility(s, i));
+						double r = (border) ? Double.NEGATIVE_INFINITY : expUtility(s, i);
+						mdp.setRewardEntry(s, i, s1, r);
 					}
 					else{
 						mdp.setTransition(s, i, s1, 0);
@@ -255,6 +257,7 @@ public class BayesMDP extends Agent {
 			}
 		}
 		averageRewardVI();
+		//VI();
 	}
 	
 	private void resetVars() {
@@ -269,13 +272,20 @@ public class BayesMDP extends Agent {
 	 * @return the next state
 	 */
 	private int nextState(int s, int a){
+		//check if state s is a frontier state (if so, not all actions are possible)
+		if((stateToActions(s)[a]-maxWstrat[a])==maxWstrat[a]){
+			border = true;
+			return s;
+		}
+		
 		s = s + (int)Math.pow(maxWstrat[0]+1, a);
 		if(s >= numStates-1)
 			s=0;
+		border = false;
 		return s;
 	}
 	
-	public double expUtility(int s, int a){
+	private double expUtility(int s, int a){
 		Vector<Integer> br = BR(s);//this is the opponent's BR in state s
 		double[] strat = new double[oppActions];
 		for (int i = 0; i < strat.length; i++) {
@@ -301,7 +311,7 @@ public class BayesMDP extends Agent {
 	 * @param s state
 	 * @return a vector of actions that maximize its obj. function
 	 */
-	public Vector<Integer> BR(int s){
+	private Vector<Integer> BR(int s){
 		//get planner strategy
 		double[] strat = stateToStrat(s);
 		
@@ -377,7 +387,7 @@ public class BayesMDP extends Agent {
 	 * if there is a state s E S that is reachable from every other state under all stationary policies.
 	 * The recurring state in BayesMDP case is always the last one (i.e. s=numStates)
 	 */
-	public void averageRewardVIJalali(){
+	private void averageRewardVIJalali(){
 		  final double EPSILON = 0.01; 
 		  double error = 12;
 		  double p=0;//for iterative version of arithmetic mean
@@ -441,11 +451,66 @@ public class BayesMDP extends Agent {
 		  
 	  }
 		
+	 private void VI(){
+		  final double EPSILON = 0.01; 
+		  double error = 12;
+		  GAMMA = 0.95;
+		  Vector<Object> actions = currentAction.getDomainSet();
+		  //states to double
+		  Map<Integer,Double> V = new HashMap<Integer,Double>(numActions);
+		  Q = new HashMap<Integer,Map<Integer,Double>>(numStates);
+		  
+		  for (int i=0; i< numStates; i++) {
+			  V.put(i, 0.0);
+			  //actions to double
+			  Map<Integer,Double>Qaux = new HashMap<Integer,Double>();
+			  
+			  for (int j=0; j< numActions; j++) 
+				  Qaux.put(j, 0.0);
+			  Q.put(i, Qaux);
+		  }	
+		  
+		  int counter = 0;
+		  while (error > EPSILON) {
+			  error = -9999;
+			  for (int s=0; s< numStates; s++) {
+				  double Vstate = -9999;
+				  for (int a=0; a< numActions; a++) {
+					  //expected over future states
+					  double sum = 0;
+					  //System.out.println(probs.size());
+					  for (int s1 = 0; s1 < numStates; s1++) {
+						sum += mdp.getTransition(s, a, s1) * V.get(s1);
+					  }
+					  
+					  double total = mdp.getRewardEntry(s, a, nextState(s,a)) + GAMMA * sum;
+					  Q.get(s).put(a, total);
+					  if(total > Vstate){
+						  Vstate = total;
+						  strategy.put(s, a);
+					  }
+
+				  }
+				  error = Math.max(error, Math.abs(Vstate - V.get(s)));
+				  V.put(s, Vstate);
+				  //c++;
+				  //System.out.println(error);
+			  }	
+			  counter++;
+			  //System.out.println(counter);
+		  }
+		  
+		  System.out.println(counter);
+		  //System.out.println(strattoString());
+		  
+	  }
+
 	 /**
 		 * Implements av. reward VI as described in Puterman'94, pg. 364
 		 * where the stop criterion (eq. 8.5.4) is max_s-min_s' 
+		 * NOTE: for constant sum games it does not converge using sp > EPSILON
 		 */
-		public void averageRewardVI(){
+		private void averageRewardVI(){
 			  final double EPSILON = 0.1; 
 			  double sp = 12;
 			  double spMin = -9999;
@@ -461,7 +526,8 @@ public class BayesMDP extends Agent {
 			  int counter = 0;
 			  
 			  //step 3 (stop criterion)
-			  while (sp > EPSILON) {
+			  //while (sp > EPSILON) {
+			  while (counter<10) {
 				  spMax = -9999;
 				  spMin = 9999;
 				  //step 2
@@ -493,7 +559,7 @@ public class BayesMDP extends Agent {
 				  sp = spMax-spMin;
 				  //System.out.println(sp);
 				  counter++;
-				  //System.out.println("counter:"+counter);
+				  System.out.println("counter:"+counter);
 			  }
 			  
 			  //System.out.println(counter);
