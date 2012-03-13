@@ -127,7 +127,7 @@ public class StateDomain_JointActionGrid extends StateDomain<State_JointActionGr
 			Info_Grid grid = (Info_Grid) e;
 			Vector<int[]> coord = grid.currentArrayJointCoord();
 			//Map<Vector<Object>,State_JointActionGrid>  jointA= mapping.get(coord);
-			Vector<Action> vectA = grid.currentJointAction();
+			Map<Integer,Action> vectA = grid.currentJointAction();
 			Vector<Object> vectO = new Vector<Object>();
 			for (int i=0; i< vectA.size(); i++) {
 				vectO.add(vectA.get(i));

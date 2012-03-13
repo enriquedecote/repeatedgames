@@ -20,6 +20,7 @@
 package reward;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 import org.w3c.dom.Element;
@@ -86,7 +87,7 @@ public class GridReward implements Reward {
 	 * @see reward.Reward#getRewards(util.ObservableEnvInfo, java.util.Vector)
 	 */
 	@Override
-	public double[] getRewards(ObservableEnvInfo st, Vector<Action> actions) {
+	public double[] getRewards(ObservableEnvInfo st, Map<Integer,Action> actions) {
 		boolean collision= false;
 		Info_Grid s = (Info_Grid)st;
 		double sum[] = new double[s.currentJointAction().size()];

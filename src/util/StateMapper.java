@@ -57,7 +57,7 @@ public abstract class StateMapper<State> {
 		return null;
 	}
 	
-	public Vector<Action> getActions(ObservableEnvInfo info){
+	public Map<Integer,Action> getActions(ObservableEnvInfo info){
 		return null;
 	}
 	

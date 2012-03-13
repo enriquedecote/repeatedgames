@@ -106,10 +106,10 @@ public class QLearningAgent extends Agent {
 					val = maxQ;
 				}
 			}
-			Vector<Action> currJointAct =  stateMapper.getActions(curr);
+			Map<Integer,Action> currJointAct =  stateMapper.getActions(curr);
 			Vector<Object> currO = new Vector<Object>();
-			for (Action act : currJointAct) {
-				currO.add(act.getCurrentState());
+			for (int act : currJointAct.keySet()) {
+				currO.add(currJointAct.get(act).getCurrentState());
 			}
 	
 			double Qval = Q.get(prevState).get(currJointAct.get(agentId).getCurrentState());

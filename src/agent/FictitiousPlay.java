@@ -89,7 +89,7 @@ public class FictitiousPlay extends Agent {
 	
 	@Override
 	public void update(ObservableEnvInfo curr) {
-		Vector<Action> currJointAct =  stateMapper.getActions(curr);
+		Map<Integer,Action> currJointAct =  stateMapper.getActions(curr);
 		
 	    for (int i = 0; i < opponents.length; i++) {
 	    	assert(currJointAct.get(i).getOwnerId() == i);

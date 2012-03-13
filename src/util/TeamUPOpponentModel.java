@@ -27,15 +27,15 @@ public class TeamUPOpponentModel {
 	int numActions;
 	private double stick = 6; //values range from 0 to 6
 	//private Map<Boolean, Double> followIndex = new HashMap<Boolean, Double>();
-	private int strat[];
-	private int agentId;
-	private Vector<Integer> sequence = new Vector<Integer>();
-	private Deque<Integer> pastActions; // this player's actions done in the past, with a window of size CAPACITY
-	private static final int CAPACITY = 10;
-	private static final double GAMMA = 0.05;
-	private static final double RHO = 0.5;
-	private static final double TRESHOLD = (Math.pow(6, RHO)/(1-GAMMA))*0.3; //this is 0.3 from max followIndex, anything bellow this is considered follower
-	private int myLastActions[]; // the leader (e.g. TeamUP) actions done in the past
+	protected int strat[];
+	protected int agentId;
+	protected Vector<Integer> sequence = new Vector<Integer>();
+	protected Deque<Integer> pastActions; // this player's actions done in the past, with a window of size CAPACITY
+	protected static final int CAPACITY = 10;
+	protected static final double GAMMA = 0.05;
+	protected static final double RHO = 0.5;
+	protected static final double TRESHOLD = (Math.pow(6, RHO)/(1-GAMMA))*0.3; //this is 0.3 from max followIndex, anything bellow this is considered follower
+	protected int myLastActions[]; // the leader (e.g. TeamUP) actions done in the past
 
 	public TeamUPOpponentModel(int actions, int id){
 		this.numActions = actions;

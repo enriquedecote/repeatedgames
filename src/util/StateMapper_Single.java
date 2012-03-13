@@ -51,7 +51,7 @@ public class StateMapper_Single extends StateMapper<State_JointAction> {
 	}
 	
 	@Override
-	public Vector<Action> getActions(ObservableEnvInfo info){
+	public Map<Integer,Action> getActions(ObservableEnvInfo info){
 		Info_NFG state = (Info_NFG) info;
 		return state.currentJointAction();
 	}

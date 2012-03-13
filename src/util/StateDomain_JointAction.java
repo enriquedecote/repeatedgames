@@ -46,7 +46,7 @@ public class StateDomain_JointAction extends StateDomain<State_JointAction> {
 	/**
 	 * @param actions
 	 */
-	public StateDomain_JointAction (Vector<Action> actions){
+	public StateDomain_JointAction (Map<Integer,Action> actions){
 		domain = new LinkedHashSet<State_JointAction>();
 		mapping = new HashMap<Vector<Object>, State_JointAction>();
 		numAgents = actions.size();
@@ -89,7 +89,7 @@ public class StateDomain_JointAction extends StateDomain<State_JointAction> {
 		String s = e.getClass().toString();
 		if(s.equals("class util.Info_NFG")){
 			Info_NFG nfg = (Info_NFG) e;
-			Vector<Action> vectA = nfg.currentJointAction();
+			Map<Integer,Action> vectA = nfg.currentJointAction();
 			Vector<Object> vectO = new Vector<Object>();
 			for (int i=0; i< vectA.size(); i++) {
 				vectO.add(vectA.get(i));

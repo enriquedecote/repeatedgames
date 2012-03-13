@@ -19,6 +19,7 @@
  ******************************************************************************/
 package reward;
 
+import java.util.Map;
 import java.util.Vector;
 
 import util.Action;
@@ -45,7 +46,7 @@ public interface Reward {
  
  public double getReward(Vector<Object> actions, int agent);
  
- public double[] getRewards(ObservableEnvInfo s, Vector<Action> actions);
+ public double[] getRewards(ObservableEnvInfo s, Map<Integer,Action> actions);
  
  public double[] getRewards(Vector<Object> actions);
  

@@ -20,6 +20,8 @@
 package experiment;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 
@@ -83,9 +85,9 @@ public class Experiment {
 			
 			// create all elements from XML
 			agents = xml.constructAgents(rewards);
-			Vector<Action> jointAction = new Vector<Action>(agents.size());
+			Map<Integer,Action> jointAction = new HashMap<Integer,Action>(agents.size());
 			for (Agent agent : agents)
-				jointAction.add(agent.getAction());
+				jointAction.put(agent.getId(),agent.getAction());
 			
 			//get state info to construct agent's structures
 			env = xml.constructEnvironment();
@@ -124,12 +126,12 @@ public class Experiment {
 	}
 	  
 	public static double[] oneIteration(Vector<Agent> agents, Environment env){
-		Vector<Action> jointAction = new Vector<Action>(agents.size());
+		Map<Integer,Action> jointAction = new HashMap<Integer,Action>(agents.size());
 		Vector<Object> jointActionString = new Vector<Object>(agents.size());
 
 		// 1) get actions
 		for(Agent agent: agents){
-			jointAction.add(agent.getAction());
+			jointAction.put(agent.getId(),agent.getAction());
 			jointActionString.add(agent.getAction().getCurrentState());
 		}
 
@@ -144,6 +146,7 @@ public class Experiment {
 			System.out.print("), ");
 			
 		}*/
+		
 		double[] instReward = rewards.getRewards(currentState,jointAction);
 		//System.out.println("rewards: "+instReward);
 		log.recordState(currentState);

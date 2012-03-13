@@ -98,7 +98,7 @@ public class GamutReward implements Reward{
 	}
 	
 	@Override
-	public double[] getRewards(ObservableEnvInfo state, Vector<Action> jointAction){
+	public double[] getRewards(ObservableEnvInfo state, Map<Integer,Action> jointAction){
 		int s = toState(toFeatures(jointAction));
 		double[] r = new double[numAgents];
 		for (int i = 0; i < r.length; i++)
@@ -115,6 +115,14 @@ public class GamutReward implements Reward{
 			r[i] = rewards.get(s).get(i);
 		
 		return r;
+	}
+	
+	private Vector<Object> toFeatures(Map<Integer,Action> jointAction){
+		Vector<Object> feats = new Vector<Object>();
+		for (int i=0; i< jointAction.size(); i++) {
+			feats.add(jointAction.get(i).getCurrentState());
+		}
+		return feats;
 	}
 	
 	private Vector<Object> toFeatures(Vector<Action> jointAction){

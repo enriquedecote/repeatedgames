@@ -19,6 +19,7 @@
  ******************************************************************************/
 package util;
 
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -33,7 +34,7 @@ public class Info_Grid extends Info_NFG{
 		super();
 	}
 	
-	public Info_Grid(Vector<Action> j){	
+	public Info_Grid(Map<Integer,Action> j){	
 		super(j);
 	}
 	

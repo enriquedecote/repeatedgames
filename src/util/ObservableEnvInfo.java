@@ -22,6 +22,7 @@
  */
 package util;
 
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -30,7 +31,7 @@ import java.util.Vector;
  */
 public interface ObservableEnvInfo {
 	
-	public Vector<Action> currentJointAction();
+	public Map<Integer,Action> currentJointAction();
 	
 	/**
 	 * This should get all relevant state info BUT the joint actions (there's a method for that)

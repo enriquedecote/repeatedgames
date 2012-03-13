@@ -19,6 +19,7 @@
  ******************************************************************************/
 package util;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -34,26 +35,30 @@ import java.util.Vector;
 
 public class  State_JointAction extends State{
 	// actionssSet is the list of actions of the agents in the game, 
-	private static Vector<Object> jointAction;
+	private static Map<Integer,Object> jointAction;
 	
 	public State_JointAction(){
 		super();
 	}
-	
-	//Constructor
+	public State_JointAction(StateDomain d){
+		super();
+		domain = d;
+	}
 	public State_JointAction (Vector<Action> actions){
-		jointAction = new Vector<Object>();
+		System.err.print("this method is deprecated");
+		jointAction = new HashMap<Integer,Object>();
 		init(actions);
 	}
 	
 	public void init(Vector<Action> actions){
-		for (Action action : actions) {
-			jointAction.add(action.getCurrentState());
+		System.err.print("this method is deprecated");
+		/*for (Action action : actions) {
+			jointAction.put(action.getCurrentState());
 		}
-		domain = new StateDomain_JointAction(actions);
+		domain = new StateDomain_JointAction(actions);*/
 	}
 	
-	public Vector<Object> getJointAction(){
+	public Map<Integer,Object> getJointAction(){
 		return jointAction;
 	}
 	

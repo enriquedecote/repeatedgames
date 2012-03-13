@@ -19,6 +19,8 @@
  ******************************************************************************/
 package util;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -27,16 +29,17 @@ import java.util.Vector;
  */
 public class Info_NFG implements ObservableEnvInfo {
 	protected Object[] jointO;
-	private Vector<Action> jointAction = new Vector();
+	private Map<Integer,Action> jointAction = new HashMap<Integer, Action>();
+	protected Vector<Integer> agentsId;
 	
 	public Info_NFG(){
 	}
 	
-	public Info_NFG(Vector<Action> j){
+	public Info_NFG(Map<Integer,Action> j){
 		Init(j);
 	}
 	
-	public Vector<Action> currentJointAction(){
+	public Map<Integer,Action> currentJointAction(){
 		
 		for (int i = 0; i < jointO.length; i++) {
 			jointAction.get(i).changeToState(jointO[i]);
@@ -47,24 +50,30 @@ public class Info_NFG implements ObservableEnvInfo {
 
 	public Vector<Object> currentState(){
 		Vector<Object> o = new Vector<Object>();
-		for (Action c : jointAction) {
-			o.add(c.getCurrentState());
+		for (int c : jointAction.keySet()) {
+			o.add(jointAction.get(c).getCurrentState());
 		}
 		return o;
 	}
 	
-	public void updateJointAction(Vector<Action> j){
+	public void updateJointAction(Map<Integer,Action> j){
 		for (int i = 0; i < j.size(); i++) {
 			jointO[i] = j.get(i).getCurrentState();
 		}
 	}
 	
-	public void Init(Vector<Action> j){
+	public void Init(Map<Integer,Action> j){
 		jointO = new Object[j.size()];
+		agentsId = new Vector<Integer>(j.size());
 		
-		for (int i = 0; i < j.size(); i++) {
+		for (int i : j.keySet()) {
 			jointO[i] = j.get(i).getCurrentState();
-			jointAction.add(j.get(i).newInstance());
+			jointAction.put(i,j.get(i).newInstance());
+			agentsId.add(i);
 		}
+	}
+	
+	public Vector<Integer> getAgentsId(){
+		return agentsId;
 	}
 }

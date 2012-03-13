@@ -1,0 +1,19 @@
+
+<Test>
+<Environment>
+<Type rewardType="rNFG" game="CONSTANTSUM2" environment="rnfgEnv">
+</Type>
+
+
+
+<Players><Player>
+	<BayesMDP name="BayesMDP" policy="_" actionType="NINTACTIONS" numActions="2" stateType="_" game="test2.nfg" oppActions="2">
+	</BayesMDP></Player>
+  <Player>
+	<FP  name="FP" policy="_" actionType="NINTACTIONS" numActions="2" stateType="_" oppActions="2" players="2">
+	</FP></Player>
+</Players>
+</Environment>
+<Experiment iterations="10000" runs="1">
+</Experiment>
+</Test>

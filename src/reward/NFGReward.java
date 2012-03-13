@@ -173,13 +173,21 @@ public class NFGReward implements Reward{
 	}
 	
 	@Override
-	public double[] getRewards(ObservableEnvInfo s, Vector<Action> jointAction){
+	public double[] getRewards(ObservableEnvInfo s, Map<Integer,Action> jointAction){
 		Vector<Object> feat = toFeatures(jointAction);
 		double[] rwds =  new double[2];
 		rwds[0] = rewards.get(toFeatures(jointAction)).get("row");
 		rwds[1] = rewards.get(toFeatures(jointAction)).get("col");
 		return rwds;
 
+	}
+	
+	private Vector<Object> toFeatures(Map<Integer,Action> jointAction){
+		Vector<Object> feats = new Vector<Object>();
+		for (int i=0; i< jointAction.size(); i++) {
+			feats.add(jointAction.get(i).getCurrentState());
+		}
+		return feats;
 	}
 	
 	private Vector<Object> toFeatures(Vector<Action> jointAction){

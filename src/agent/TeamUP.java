@@ -140,10 +140,10 @@ public class TeamUP extends Agent {
 	@Override
 	public void update(ObservableEnvInfo curr) {
 	  //public void observeOutcome(int[] actions){
-		Vector<Action> currJointAct =  stateMapper.getActions(curr);
+		Map<Integer,Action> currJointAct =  stateMapper.getActions(curr);
 		Vector<Object> currO = new Vector<Object>();
-		for (Action act : currJointAct) 
-			currO.add(act.getCurrentState());
+		for (int act : currJointAct.keySet()) 
+			currO.add(currJointAct.get(act).getCurrentState());
 		
 		double currReward = reward.getReward(curr, currO, agentId);
 		

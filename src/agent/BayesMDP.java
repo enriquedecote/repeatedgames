@@ -73,6 +73,7 @@ public class BayesMDP extends Agent {
 	private MDPModel mdp;
 	private int numActions = 1;
 	private int oppActions = 1;
+	private Vector<Integer> oppIds;
 	private int numStates = 1;
 	private Vector<int[]> wPointsVector = new Vector<int[]>();
 	private String gameName;
@@ -125,18 +126,13 @@ public class BayesMDP extends Agent {
 	@Override
 	public void update(ObservableEnvInfo curr) {
 		Info_NFG info = (Info_NFG)curr;
-		Vector<Action> currJointAct =  stateMapper.getActions(curr);
 		currentState = (State) stateMapper.getState(curr);
-		Vector<Object> currO = new Vector<Object>();
-		
-		for (Action act : currJointAct) 
-			currO.add(act.getCurrentState());
+		Vector<Object> currO = info.currentState();
 
 		int currReward = (int)reward.getReward(curr, currO, agentId);
-		
-		//if(currJointAct. || searchingIndiffPoint)		
+				
 		if(!isPredictedReward(currReward) || searchingIndiffPoint)
-			find_w();
+			find_w(info.currentJointAction().get(oppIds.firstElement()));
 		
 		//update state
 		//System.out.println("["+currState+":"+currentAction.getCurrentState()+"]"+currReward);
@@ -164,7 +160,7 @@ public class BayesMDP extends Agent {
 		}
 	}
 	
-	private void find_w(){
+	private void find_w(Action a){
 		
 	}
 	
@@ -567,6 +563,21 @@ public class BayesMDP extends Agent {
 			  mdp.setGainOptimalReward(V.get(0));
 			  
 		  }
+		
+		/**
+		 * Constructs state space and strategy
+		 * @param e
+		 */
+		public void constructStructures(ObservableEnvInfo state){
+			String s = state.getClass().toString();
+			if(s.equals("class util.Info_NFG")||s.equals("class util.Info_Grid")){
+				Info_NFG nfg = (Info_NFG) state;
+				oppIds = nfg.getAgentsId();
+				oppIds.remove(agentId);
+			}//end if
+			
+		}
+		
 	public void recordToLogger(ExperimentLogger log){
 		String slog = new String();
 		String ret =	System.getProperty("line.separator");

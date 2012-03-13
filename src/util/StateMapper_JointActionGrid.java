@@ -59,17 +59,17 @@ public class StateMapper_JointActionGrid extends StateMapper<State_JointActionGr
 			for(int j : i)
 				feats.add(j);
 		}
-		Vector<Action> vectA = grid.currentJointAction();
+		Map<Integer,Action> vectA = grid.currentJointAction();
 		Vector<Object> vectO = new Vector<Object>();
-		for (Action a : vectA) {
-			vectO.add(a.getCurrentState());
+		for (int a : vectA.keySet()) {
+			vectO.add(vectA.get(a).getCurrentState());
 		}
-		feats.add(vectO);
+		feats.add(grid.currentState());
 		return mapping.get(feats);
 	}
 	
 	@Override
-	public Vector<Action> getActions(ObservableEnvInfo info){
+	public Map<Integer,Action> getActions(ObservableEnvInfo info){
 		Info_NFG state = (Info_NFG) info;
 		return state.currentJointAction();
 	}

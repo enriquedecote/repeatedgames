@@ -62,12 +62,12 @@ public class GridEnvironment implements Environment<Action> {
 		envInfo = new Info_Grid();
 	}
 	
-	public GridEnvironment(Vector<Action> jointAction) {
+	public GridEnvironment(Map<Integer,Action> jointAction) {
 		envInfo = new Info_Grid(jointAction);
 	}
 	
 	@Override
-	public ObservableEnvInfo nextEnvInfo(Vector<Action> actions) {
+	public ObservableEnvInfo nextEnvInfo(Map<Integer,Action> actions) {
 		envInfo.updateJointAction(actions);
 		
 		Vector<Coordinate> coords = new Vector<Coordinate>();
@@ -158,7 +158,7 @@ public class GridEnvironment implements Environment<Action> {
 	}
 
 	@Override
-	public void Init(Vector<Action> actions) {
+	public void Init(Map<Integer,Action> actions) {
 		envInfo.Init(actions);
 	}
 

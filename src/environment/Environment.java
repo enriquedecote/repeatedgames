@@ -19,6 +19,7 @@
  ******************************************************************************/
 package environment;
 
+import java.util.Map;
 import java.util.Vector;
 
 import util.ObservableEnvInfo;
@@ -42,7 +43,7 @@ public interface Environment<A> {
 	 * @param actions
 	 * @return a map with the new env info
 	 */
-	public ObservableEnvInfo nextEnvInfo(Vector<A> actions);
+	public ObservableEnvInfo nextEnvInfo(Map<Integer,A> actions);
 	/**
 	 * Gives information about the environment
 	 * @return
@@ -53,7 +54,7 @@ public interface Environment<A> {
 	 * Initializes the object with action information
 	 * @param actions
 	 */
-	public void Init(Vector<A> actions);
+	public void Init(Map<Integer,A> actions);
 	
 	/**
 	 * @param e
