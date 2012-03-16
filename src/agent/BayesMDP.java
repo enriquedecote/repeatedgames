@@ -23,12 +23,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.Stack;
 import java.util.Vector;
 
 import org.w3c.dom.Element;
@@ -80,7 +82,12 @@ public class BayesMDP extends Agent {
 	private int currState = 0;
 	private boolean searchingIndiffPoint = false;
 	private int[] maxWstrat;//for best equilibrium r/k; [0]=r,[1]=k-r
+	private int[] C;//(eq. 2 in the paper) a vector that counts how many times each action has been chosen
 	private int totalActions;//for best equilibrium = k
+	//for find_w
+	private Object desiredResponse;
+	private Object inducedResponse1;
+	private Object inducedResponse2;
 	
 	//given a state, returns a set of pairs <action,value>
 	Map<Integer,Map<Integer,Double>> Q;
@@ -91,6 +98,7 @@ public class BayesMDP extends Agent {
 	public void init(Element e, int id){
 		super.init(e, id);
 		numActions = currentAction.getDomainSet().size();
+		C = new int[numActions];
 		gameName = e.getAttribute("game");
 		oppActions = Integer.valueOf(e.getAttribute("oppActions"));
 		getWpoints(System.getProperty("user.home") + "/programing/gamutGames/" + gameName);
@@ -126,22 +134,25 @@ public class BayesMDP extends Agent {
 	@Override
 	public void update(ObservableEnvInfo curr) {
 		Info_NFG info = (Info_NFG)curr;
-		currentState = (State) stateMapper.getState(curr);
+		currentState = (State<?, ?>) stateMapper.getState(curr);
 		Vector<Object> currO = info.currentState();
 
 		int currReward = (int)reward.getReward(curr, currO, agentId);
+		int oppAction = (Integer)info.currentJointAction().get(oppIds.firstElement()).getCurrentState();
 				
-		if(!isPredictedReward(currReward) || searchingIndiffPoint)
+		//if(!isPredictedReward(currReward) || searchingIndiffPoint)
+		if(!BR(actionsToStrat(C)).contains(oppAction) || searchingIndiffPoint)
 			find_w(info.currentJointAction().get(oppIds.firstElement()));
 		
-		//update state
-		//System.out.println("["+currState+":"+currentAction.getCurrentState()+"]"+currReward);
-		currState = nextState(currState, (int)(Integer)currentAction.getCurrentState());
-
-		//choose a new action
-		currentAction.changeToState(strategy.get(currState)); 
-		
-		
+		else{
+			//update state
+			System.out.println("["+currState+":"+currentAction.getCurrentState()+"]"+currReward);
+			currState = nextState(currState, (int)(Integer)currentAction.getCurrentState());
+	
+			//choose a new action
+			currentAction.changeToState(strategy.get(currState)); 
+		}
+		C[(Integer)currentAction.getCurrentState()]++;
 		round++;
 		//memory.offerFirst(currentState);
 		
@@ -161,7 +172,41 @@ public class BayesMDP extends Agent {
 	}
 	
 	private void find_w(Action a){
+		System.out.println("I think BR("+Arrays.toString(actionsToStrat(C))+")="+BR(actionsToStrat(C)).toString()+", but "+a.getCurrentState().toString());
 		
+		if(!searchingIndiffPoint){
+			int[] aux = new int[numActions];
+			inducedResponse1=getDesiredBR(a.getCurrentState());
+			//first strategy to test
+			aux[0] = 1;
+			Vector<Integer> oppBR = BR(actionsToStrat(aux));
+			int i=0;
+			while(a.getCurrentState()== oppBR.firstElement()){
+				aux[i]=0; aux[i+1]=1;
+				oppBR = BR(actionsToStrat(aux));
+				i++;
+			}
+			inducedResponse2=strategyToAction(aux);
+			currentAction.changeToState(inducedResponse2);
+			searchingIndiffPoint = true;
+		}
+		else{
+			if(desiredResponse==a.getCurrentState())//step 2 & 3 in paper: identify the non deterministic action
+				
+		}
+	}
+	
+	private Object getDesiredBR(Object response){
+		int[] aux = new int[numActions];
+		aux[0] = 1;
+		Vector<Integer> oppBR = BR(actionsToStrat(aux));
+		int i=0;
+		while(oppBR.firstElement()!=response){
+			aux[i]=0; aux[i+1]=1;
+			oppBR = BR(actionsToStrat(aux));
+			i++;
+		}
+		return strategyToAction(aux);
 	}
 	
 	/**
@@ -282,7 +327,7 @@ public class BayesMDP extends Agent {
 	}
 	
 	private double expUtility(int s, int a){
-		Vector<Integer> br = BR(s);//this is the opponent's BR in state s
+		Vector<Integer> br = BR(stateToStrat(s));//this is the opponent's BR in state s
 		double[] strat = new double[oppActions];
 		for (int i = 0; i < strat.length; i++) {
 			if(br.contains(i))
@@ -291,7 +336,7 @@ public class BayesMDP extends Agent {
 				strat[i] = 0.0;
 		}
 		double util = 0;
-		Vector actions = new Vector();
+		Vector<Object> actions = new Vector<Object>();
 		actions.add(a);
 		for (int i = 0; i < strat.length; i++) {
 			actions.add(i);
@@ -304,18 +349,16 @@ public class BayesMDP extends Agent {
 	
 	/**
 	 * Calculates the opponent's BR to state s=(model of bayesMDP)
-	 * @param s state
+	 * @param strat the planner's strategy (probability distribution over actions)
 	 * @return a vector of actions that maximize its obj. function
 	 */
-	private Vector<Integer> BR(int s){
-		//get planner strategy
-		double[] strat = stateToStrat(s);
+	private Vector<Integer> BR(double[] strat){
 		
 		double maxUtil = Double.NEGATIVE_INFINITY;
 		Vector<Integer> maxAct = new Vector<Integer>();
 		for (int i = 0; i < oppActions; i++) {
 			double util = 0;
-			Vector actions = new Vector();
+			Vector<Object> actions = new Vector<Object>();
 			actions.add(0);//planner's action (it will be removed later in the for cycle
 			actions.add(i);
 			for (int j = 0; j < strat.length; j++) {
@@ -351,6 +394,37 @@ public class BayesMDP extends Agent {
 		
 	       assert(strat.length == numActions);
 	       return strat;
+	}
+	
+	/**
+	 * Transforms vector C (eq. 2 in the paper) to a strategy
+	 * @param aux
+	 * @return
+	 */
+	private double[] actionsToStrat(int[] aux){
+		double[] strat = new double[numActions];
+
+		int sum=0;
+		for (int i = 0; i < aux.length; i++)
+			sum += aux[i];
+		
+		if(sum==0){
+			for (int i = 0; i < strat.length; i++) 
+				strat[i]= 1/strat.length;
+			return strat;
+		}
+			
+		for (int i = 0; i < aux.length; i++)
+			strat[i] = (double)aux[i]/(double)sum;
+		
+	    assert(strat.length == numActions);
+	    
+	    return strat;
+	}
+	
+	private Object strategyToAction(int[] strat){
+		Vector<int[]> s = new Vector<int[]>(Arrays.asList(strat));
+		return s.indexOf(1);
 	}
 	
 	private double[] stateToStrat(int n){
