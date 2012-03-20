@@ -85,9 +85,10 @@ public class BayesMDP extends Agent {
 	private int[] C;//(eq. 2 in the paper) a vector that counts how many times each action has been chosen
 	private int totalActions;//for best equilibrium = k
 	//for find_w
-	private Object desiredResponse;
-	private Object inducedResponse1;
-	private Object inducedResponse2;
+	private Object[] actionToInduceBR;
+	private Object inducedBR;
+	private boolean inStep3 = false;
+	private HashMap<Object,Object> nonDeterministic = new HashMap<Object, Object>();//to identify which action is non deterministic
 	
 	//given a state, returns a set of pairs <action,value>
 	Map<Integer,Map<Integer,Double>> Q;
@@ -99,6 +100,7 @@ public class BayesMDP extends Agent {
 		super.init(e, id);
 		numActions = currentAction.getDomainSet().size();
 		C = new int[numActions];
+		actionToInduceBR = new Object[numActions];
 		gameName = e.getAttribute("game");
 		oppActions = Integer.valueOf(e.getAttribute("oppActions"));
 		getWpoints(System.getProperty("user.home") + "/programing/gamutGames/" + gameName);
@@ -171,12 +173,17 @@ public class BayesMDP extends Agent {
 		}
 	}
 	
+	/**
+	 * Method that returns when standing at the indifference point
+	 * @param a opponent's current action
+	 */
 	private void find_w(Action a){
 		System.out.println("I think BR("+Arrays.toString(actionsToStrat(C))+")="+BR(actionsToStrat(C)).toString()+", but "+a.getCurrentState().toString());
 		
 		if(!searchingIndiffPoint){
 			int[] aux = new int[numActions];
-			inducedResponse1=getDesiredBR(a.getCurrentState());
+			actionToInduceBR[0]=getDesiredBR(a.getCurrentState());
+			nonDeterministic.put(actionToInduceBR[0], a.getCurrentState());
 			//first strategy to test
 			aux[0] = 1;
 			Vector<Integer> oppBR = BR(actionsToStrat(aux));
@@ -186,13 +193,29 @@ public class BayesMDP extends Agent {
 				oppBR = BR(actionsToStrat(aux));
 				i++;
 			}
-			inducedResponse2=strategyToAction(aux);
-			currentAction.changeToState(inducedResponse2);
+			actionToInduceBR[1]=strategyToAction(aux);
+			currentAction.changeToState(actionToInduceBR[1]);
+			inducedBR= (Object)oppBR.firstElement();
+			nonDeterministic.put(actionToInduceBR[1], oppBR.firstElement());
 			searchingIndiffPoint = true;
 		}
 		else{
-			if(desiredResponse==a.getCurrentState())//step 2 & 3 in paper: identify the non deterministic action
-				
+			if(a.getCurrentState()==inducedBR){//step 2 & 3 in paper: identify the non deterministic action
+				if(inStep3){
+					if(nonDeterministic.get(currentAction.getCurrentState())!=a.getCurrentState()){
+						searchingIndiffPoint = false;
+						inStep3 = false;
+						return;
+					}
+						
+					int x=(currentAction.getCurrentState()==actionToInduceBR[0])? 1:0;
+					currentAction.changeToState(x);
+				}else{//first time with switch
+					currentAction.changeToState(actionToInduceBR[0]);//action i'
+					inStep3 = true;
+				}
+					
+			}
 		}
 	}
 	
@@ -423,7 +446,7 @@ public class BayesMDP extends Agent {
 	}
 	
 	private Object strategyToAction(int[] strat){
-		Vector<int[]> s = new Vector<int[]>(Arrays.asList(strat));
+		Vector<Integer> s = new Vector<Integer>(Arrays.asList(strat));
 		return s.indexOf(1);
 	}
 	
