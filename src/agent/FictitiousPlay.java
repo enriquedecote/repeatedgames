@@ -108,6 +108,7 @@ public class FictitiousPlay extends Agent {
 	 */
 	private void computeAction() {
 		assert(opponents.length==1); //Works only for 2 players
+		double[] oppStrat = opponents[0].currentStrategy();
 		Vector<Integer> br = BR(opponents[0].currentStrategy());
 		double[] strat = new double[currentAction.getDomainSet().size()];
 		for (int i = 0; i < strat.length; i++) {

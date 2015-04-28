@@ -37,12 +37,8 @@ import org.w3c.dom.Element;
 
 import experiment.ExperimentLogger;
 import experiment.Logger;
-
-
 import agent.Agent.Policy;
-
 import reward.Reward;
-
 import util.Action;
 import util.State_JointAction;
 import util.StateDomain_JointAction;
@@ -103,7 +99,7 @@ public class BayesMDP extends Agent {
 		actionToInduceBR = new Object[numActions];
 		gameName = e.getAttribute("game");
 		oppActions = Integer.valueOf(e.getAttribute("oppActions"));
-		getWpoints(System.getProperty("user.home") + "/programing/gamutGames/" + gameName);
+		getWpoints(System.getProperty("user.home") + "/experiments/repeatedgames/gamutGames/" + gameName);
 		
 		double g = 0; //gain optimal max value
 		int maxW=0;
@@ -115,6 +111,7 @@ public class BayesMDP extends Agent {
 			}
 		}
 		constructBayesMDP(wPointsVector.get(maxW));
+		//C[(Integer)currentAction.getCurrentState()]++;
 	}
 	// constructor
 	public BayesMDP(Reward r) {
@@ -138,23 +135,26 @@ public class BayesMDP extends Agent {
 		Info_NFG info = (Info_NFG)curr;
 		currentState = (State<?, ?>) stateMapper.getState(curr);
 		Vector<Object> currO = info.currentState();
-
 		int currReward = (int)reward.getReward(curr, currO, agentId);
 		int oppAction = (Integer)info.currentJointAction().get(oppIds.firstElement()).getCurrentState();
 				
 		//if(!isPredictedReward(currReward) || searchingIndiffPoint)
-		if(!BR(actionsToStrat(C)).contains(oppAction) || searchingIndiffPoint)
+		if(!BR(actionsToStrat(C)).contains(oppAction) || searchingIndiffPoint){
+			BR(actionsToStrat(C));
 			find_w(info.currentJointAction().get(oppIds.firstElement()));
-		
+			System.out.println("Finding indiff point...");
+			C[(Integer)currentAction.getCurrentState()]++;
+		}
 		else{
 			//update state
-			System.out.println("["+currState+":"+currentAction.getCurrentState()+"]"+currReward);
+			System.out.println("["+currState+":("+currentAction.getCurrentState()+","+oppAction+")]"+currReward);
 			currState = nextState(currState, (int)(Integer)currentAction.getCurrentState());
+			C[(Integer)currentAction.getCurrentState()]++;
 	
 			//choose a new action
 			currentAction.changeToState(strategy.get(currState)); 
+			//System.out.println("next["+currState+":"+currentAction.getCurrentState()+"]");
 		}
-		C[(Integer)currentAction.getCurrentState()]++;
 		round++;
 		//memory.offerFirst(currentState);
 		
@@ -244,7 +244,7 @@ public class BayesMDP extends Agent {
         try {
         	//String[] cmd = new String[]{"/bin/sh", "-c", "gambit-enummixed","<" + gameName};
         	//String cmd = "/bin/sh -c 'gambit-enummixed < "+ gameName+"'";
-        	String cmd = "/home/enrique/programing/gamutGames/launch.sh " +gameName;
+        	String cmd = "/Users/enrique/experiments/repeatedgames/gamutGames/launch.sh " +gameName;
         	Process p = Runtime.getRuntime().exec(cmd);
             //Process p = Runtime.getRuntime().exec("/usr/bin/gambit-enummixed -q < " + gameName+ "> sol.txt");
         	//Process p = Runtime.getRuntime().exec("cat " + gameName+ "> sol.txt");
@@ -376,19 +376,10 @@ public class BayesMDP extends Agent {
 	 * @return a vector of actions that maximize its obj. function
 	 */
 	private Vector<Integer> BR(double[] strat){
-		
 		double maxUtil = Double.NEGATIVE_INFINITY;
 		Vector<Integer> maxAct = new Vector<Integer>();
-		for (int i = 0; i < oppActions; i++) {
-			double util = 0;
-			Vector<Object> actions = new Vector<Object>();
-			actions.add(0);//planner's action (it will be removed later in the for cycle
-			actions.add(i);
-			for (int j = 0; j < strat.length; j++) {
-				actions.remove(0); actions.add(0, j);
-				double r = reward.getReward(actions, 1);
-				util = util + strat[j]*reward.getReward(actions, 1);
-			}
+		for (int i = 0; i < strat.length; i++) {
+			double util = expUtility(strat, i);
 			
 			if(util==maxUtil)
 				maxAct.add(i);
@@ -400,6 +391,25 @@ public class BayesMDP extends Agent {
 		}
 		
 		return maxAct;
+	}	
+	
+	/**
+	 * this will only work for symmetric games
+	 * (for symmetric games it does not matter what player plays row or column)
+	 * @param strat
+	 * @param a
+	 * @return
+	 */
+	private double expUtility(double[] strat, int a){
+		double util = 0;
+		Vector actions = new Vector();
+		actions.add(a);
+		for (int i = 0; i < strat.length; i++) {
+			actions.add(i);
+			util = util + strat[i]*reward.getReward(actions, 1);
+			actions.removeElementAt(1);
+		}
+		return util;
 	}
 	
 	//state s=0 is the equilibrium strategy
@@ -446,8 +456,9 @@ public class BayesMDP extends Agent {
 	}
 	
 	private Object strategyToAction(int[] strat){
-		Vector<Integer> s = new Vector<Integer>(Arrays.asList(strat));
-		return s.indexOf(1);
+		
+		Vector s = new Vector(Arrays.asList(strat));
+		return Arrays.binarySearch(strat, 1);
 	}
 	
 	private double[] stateToStrat(int n){

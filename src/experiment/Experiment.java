@@ -115,6 +115,7 @@ public class Experiment {
 		int totIterations = iterations;
 		while (iterations>0){
 			iterations = iterations - 1;
+			System.out.println("++++"+iterations+"++++");
 			runUtil = oneIteration(agents, env);
 			for (int i = 0; i < runUtil.length; i++) {
 				totUtil[i] += runUtil[i];
@@ -151,7 +152,7 @@ public class Experiment {
 		//System.out.println("rewards: "+instReward);
 		log.recordState(currentState);
 		log.recordActions(jointActionString);
-		//System.out.println("State:"+jointActionString);
+		System.out.println("State:"+jointActionString);
 		// 3) update agents
 		for(Agent agent: agents)
 			agent.update(currentState);
