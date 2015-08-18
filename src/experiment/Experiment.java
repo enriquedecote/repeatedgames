@@ -22,19 +22,15 @@ package experiment;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.Vector;
-
 
 import org.xml.sax.SAXException;
 
 import reward.Reward;
-
 import util.ReadXml;
-
-
 import agent.Agent;
 import environment.Environment;
-
 import util.Action;
 import util.ObservableEnvInfo;
 
@@ -61,11 +57,13 @@ public class Experiment {
 	public static void main(String[] args) throws SAXException, IOException{
 
 
-		//Scanner input = new Scanner (System.in);
-		//System.out.println("Please Enter XML Filename");
-		//String filename = input.nextLine();
+		Scanner input = new Scanner (System.in);
+		System.out.println("game?");
+		String game = input.nextLine();
+		game = game.concat("/");
+		String path = "games/";
 		String xmlFile = args[0];
-		ReadXml xml = new ReadXml(xmlFile+".xml", "bean.xml");
+		ReadXml xml = new ReadXml(path+game+xmlFile+".xml", "bean.xml");
 		
 		log = new ExperimentLogger();
 		runs = Integer.parseInt(xml.getExperimentRuns());

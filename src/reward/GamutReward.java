@@ -188,9 +188,15 @@ public class GamutReward implements Reward{
 	
 	private String buildGame(String game){
 		try {
-			String cmd ="java -jar "+path+"gamut.jar -g "+game+ " -random_seed 1 -normalize -min_payoff 0 -max_payoff 5 -f "+
-			path+game+".GT -players 3 -function_X 3 -function_Y 1 -function_Z 2 -output GTOutput";
+			//iPD
+			//String cmd ="java -jar "+path+"gamut.jar -g "+game+ " -random_seed 1 -normalize -min_payoff 0 -max_payoff 5 -f "+
+			//path+game+".GT -players 2 -function_X 3 -function_Y 1 -function_Z 2 -output GTOutput";
+			String cmd ="java -jar "+path+"gamut.jar -g "+game+ " -int_payoffs -random_seed 1 -normalize -min_payoff 0 -max_payoff 5 -f "+
+					path+game+".GT -output GTOutput";
 	    	Process p = Runtime.getRuntime().exec(cmd);
+	    	cmd ="java -jar "+path+"gamut.jar -g "+game+ " -int_payoffs -random_seed 1 -normalize -min_payoff 0 -max_payoff 5 -f "+
+					path+game+".nfg -output GambitOutput";
+	    	p = Runtime.getRuntime().exec(cmd);
 	    	return path+game+".GT";
 		}
         catch (IOException e) {
