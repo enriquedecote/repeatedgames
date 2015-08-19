@@ -32,13 +32,13 @@ cd $RESULTS;
 #$5 Name of the output file
 #$6 Size of the fixed window used to compute the mobile average
 # Name of the octave script file
-for i in `jot 2 $3`; this is for mac
+for i in `jot 2 $3`; #this is for mac
 #for i in `seq $3 $4`;
     do
       rm -f $RESULTS/$1_$5/.DS*;
       $RESULTS/analyze_runs.sh $RESULTS/$1_$5 $i 0 $2 $1$i$5.mob 100;
       mv $RESULTS/$1_$5/$1$i$5.mob $EXEC;
-    done    
+    done
 
 
 #rm -f oct_script.m;

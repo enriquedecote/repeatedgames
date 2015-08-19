@@ -187,6 +187,8 @@ public class GamutReward implements Reward{
 	}
 	
 	private String buildGame(String game){
+		if (game.contains(".GT"))
+			return path+game;
 		try {
 			//iPD
 			//String cmd ="java -jar "+path+"gamut.jar -g "+game+ " -random_seed 1 -normalize -min_payoff 0 -max_payoff 5 -f "+

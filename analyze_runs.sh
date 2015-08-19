@@ -104,6 +104,6 @@ echo "endif" >> $script
 echo "dlmwrite(\""$outfile"\",final_res,'\t');" >> $script
 
 # Launch the octave script
-octave -qf $script
+#octave -qf $script
 
 #rm -f $script
