@@ -6,11 +6,12 @@ file=graphs$1.gplot
 # 3. Every
 # 4. Optimal baseline
 
-echo "set terminal postscript enhanced eps color solid \"Helvetica\" 10" > $file
-echo "set output \"Graph$1.eps\"" >> $file
+echo "set terminal pdfcairo enhanced color" > $file
+echo "set output \"Graph$1.pdf\"" >> $file
 echo "set title \"$2\"" >> $file
-echo "set data style linespoints" >> $file
-echo "set border 3" >> $file
+echo "set grid" >> $file
+echo "set style data lines" >> $file
+#echo "set border 3" >> $file
 echo "set xtics nomirror" >> $file
 echo "set ytics nomirror" >> $file
 echo "set multiplot" >> $file
