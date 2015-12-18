@@ -29,10 +29,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+
 import reward.Reward;
-
 import agent.Agent;
-
 import util.Action;
 import util.ObservableEnvInfo;
 import util.State_JointAction;
@@ -251,6 +251,16 @@ public class ExperimentLogger {
 	public void recordConfig(String s){
 		config.append(s);
 		config.append(ret);
+	}
+
+	public void recordMean(double[][] allUtil) {
+		content.append("Total utility: ");
+		DescriptiveStatistics stats0=new DescriptiveStatistics(allUtil[0]);
+		DescriptiveStatistics stats1=new DescriptiveStatistics(allUtil[1]);
+		content.append(Double.toString(stats0.getMean())+"+-"+Double.toString(stats0.getStandardDeviation()));
+		content.append("\t"+Double.toString(stats1.getMean())+"+-"+Double.toString(stats1.getStandardDeviation()));
+		
+		content.append(ret);
 	}
 
 

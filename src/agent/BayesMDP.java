@@ -237,6 +237,7 @@ public class BayesMDP extends Agent {
 	 * @param gameName
 	 * @return A vector a of strategies (each expressed as rational numbers) 
 	 * containing all strategies with indifference points
+	 * TODO: NPlayerPrisonersDilemma.nfg not working
 	 */
 	private void getWpoints(String gameName){
 		String s = null;

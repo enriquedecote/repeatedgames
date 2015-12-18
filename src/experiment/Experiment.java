@@ -110,6 +110,7 @@ public class Experiment {
 		
 		double[] totUtil = new double[agents.size()]; 
 		double[] runUtil = new double[agents.size()];
+		double[][] allUtil = new double[agents.size()][iterations];
 		int totIterations = iterations;
 		while (iterations>0){
 			iterations = iterations - 1;
@@ -117,10 +118,11 @@ public class Experiment {
 			runUtil = oneIteration(agents, env);
 			for (int i = 0; i < runUtil.length; i++) {
 				totUtil[i] += runUtil[i];
+				allUtil[i][iterations] = runUtil[i];
 			}
 			log.recordUtils(runUtil, iterations);
 		}
-		log.recordMean(totUtil, totIterations);
+		log.recordMean(allUtil);
 		return totUtil;
 	}
 	  

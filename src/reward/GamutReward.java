@@ -74,8 +74,12 @@ public class GamutReward implements Reward{
 		  Integer agent = 0;
 		  while ((strLine = br.readLine()) != null)   {
 			  String[] r = strLine.split(" ");
-			  for (int i = 0; i < numberOfOutcomes; i++) 
-				  rewards.get(i).put(agent, Double.valueOf(r[i]));
+			  for (int i = 0; i < numberOfOutcomes; i++){ 
+				  Double val = 0.0;
+				  val = convert(r[i]);
+				  rewards.get(i).put(agent, val);
+				  //rewards.get(i).put(agent, Double.valueOf(r[i]));
+			  }
 			  agent++;  
 		  }
 		  
@@ -85,6 +89,14 @@ public class GamutReward implements Reward{
 		   System.err.println("Error: " + e.getMessage());   
 	   }
 	
+	}
+	
+	public Double convert(String s){
+		if(s.contains("/")){
+			String[] parts = s.split("/");
+			return Double.valueOf(Double.valueOf(parts[0])/Double.valueOf(parts[1]));	
+		}else
+			return Double.valueOf(s);
 	}
 	
 	public double getReward(ObservableEnvInfo state, Vector<Object> jointAction, int agent){
