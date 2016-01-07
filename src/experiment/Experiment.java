@@ -64,6 +64,7 @@ public class Experiment {
 		String path = "games/";
 		String xmlFile = args[0];
 		ReadXml xml = new ReadXml(path+game+xmlFile+".xml", "bean.xml");
+		double[] means = {0.0,0.0};
 		
 		log = new ExperimentLogger();
 		runs = Integer.parseInt(xml.getExperimentRuns());
@@ -93,16 +94,15 @@ public class Experiment {
 			currentState = env.nextEnvInfo(jointAction);
 			for (Agent agent : agents)
 				agent.constructStructures(currentState);
-				
-	
-			manyIterations(agents, env, iterations);
+			double[] tmp = manyIterations(agents, env, iterations);
+			means[0]+= tmp[0];means[1]+=tmp[1];
 			System.out.println("end of run " + i);
 			log.flush();
 		}
 		
 		for (Agent agent : agents) 
 			agent.recordToLogger(log);
-
+		log.recordConfig(Double.toString(means[0]/(runs*iterations))+"\t"+Double.toString(means[1]/(runs*iterations)));
 		log.flushtoConfigFile();
 }
 	
@@ -123,6 +123,7 @@ public class Experiment {
 			log.recordUtils(runUtil, iterations);
 		}
 		log.recordMean(allUtil);
+		//log.recordConfig(String.valueOf(allUtil));
 		return totUtil;
 	}
 	  

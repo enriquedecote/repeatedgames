@@ -99,7 +99,8 @@ public class BayesMDP extends Agent {
 		actionToInduceBR = new Object[numActions];
 		gameName = e.getAttribute("game");
 		oppActions = Integer.valueOf(e.getAttribute("oppActions"));
-		getWpoints(System.getProperty("user.home") + "/experiments/repeatedgames/gamutGames/" + gameName);
+		String path = System.getProperty("user.home") + "/experiments/repeatedgames/gamutGames/" + gameName;
+		getWpoints(path);
 		
 		double g = 0; //gain optimal max value
 		int maxW=0;
@@ -255,7 +256,7 @@ public class BayesMDP extends Agent {
             BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
             
             // read the output from the command
-            //System.out.println("Here is the standard output of the command:\n");
+            //System.out.println("Here is the standard output of the command:");
             //System.out.println(stdInput.readLine());
             while ((s = stdInput.readLine()) != null) {
                 System.out.println(s);
@@ -380,7 +381,7 @@ public class BayesMDP extends Agent {
 		double maxUtil = Double.NEGATIVE_INFINITY;
 		Vector<Integer> maxAct = new Vector<Integer>();
 		for (int i = 0; i < strat.length; i++) {
-			double util = expUtility(strat, i);
+			double util = expUtility(strat, i, 1);
 			
 			if(util==maxUtil)
 				maxAct.add(i);
@@ -395,20 +396,42 @@ public class BayesMDP extends Agent {
 	}	
 	
 	/**
-	 * this will only work for symmetric games
-	 * (for symmetric games it does not matter what player plays row or column)
-	 * @param strat
-	 * @param a
+	 * Computes an agent's expected utility w.r.t. its opponent's mixed strategy
+	 * @param strat the strategy used by the opponent
+	 * @param a the action being evaluated 
+	 * @param agent the agent to evaluate it's expected reward
+	 * @return
+	 */
+	private double expUtility(double[] strat, int a, int agent){
+		double util = 0;
+		int[]b = {0,0};
+		Vector actions = new Vector(Arrays.asList(b));
+		actions.add(agent, a);;
+		for (int i = 0; i < strat.length; i++) {
+			int x = (agent==1) ? 0:1;
+			actions.remove(x);
+			actions.add(x,i);		
+			util = util + strat[i]*reward.getReward(actions, agent);
+		}
+		return util;
+	}
+	
+	/**
+	 * Computes the agent's own expected utility w.r.t. the opponent's mixed strategy
+	 * @param strat the strategy used by the opponent
+	 * @param a the action being evaluated 
 	 * @return
 	 */
 	private double expUtility(double[] strat, int a){
 		double util = 0;
-		Vector actions = new Vector();
-		actions.add(a);
+		int[]b = {0,0};
+		Vector actions = new Vector(Arrays.asList(b));
+		actions.add(agentId, a);;
 		for (int i = 0; i < strat.length; i++) {
-			actions.add(i);
-			util = util + strat[i]*reward.getReward(actions, 1);
-			actions.removeElementAt(1);
+			int x = (agentId==1) ? 0:1;
+			actions.remove(x);
+			actions.add(x,i);		
+			util = util + strat[i]*reward.getReward(actions, agentId);
 		}
 		return util;
 	}

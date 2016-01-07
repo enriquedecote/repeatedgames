@@ -44,7 +44,12 @@ public interface Reward {
  
  public double getReward(ObservableEnvInfo s, Vector<Object> actions, int agent);
  
- public double getReward(Vector<Object> actions, int agent);
+ /**
+ * @param actions the joint action 
+ * @param agent the agent wanting a reward for (this is in absolut form, i.e. agentId 0's action is in position 0 and so on)
+ * @return a real number with the reward for the agent
+ */
+public double getReward(Vector<Object> actions, int agent);
  
  public double[] getRewards(ObservableEnvInfo s, Map<Integer,Action> actions);
  

@@ -19,6 +19,7 @@
  ******************************************************************************/
 package agent;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -165,20 +166,21 @@ public class FictitiousPlay extends Agent {
 	}
 	
 	/**
-	 * this will only work for symmetric games
-	 * (for symmetric games it does not matter what player plays row or column)
-	 * @param strat
-	 * @param a
+	 * Computes the agent's own expected utility w.r.t. the opponent's mixed strategy
+	 * @param strat the strategy used by the opponent
+	 * @param a the action being evaluated 
 	 * @return
 	 */
 	private double expUtility(double[] strat, int a){
 		double util = 0;
-		Vector actions = new Vector();
-		actions.add(a);
+		int[]b = {0,0};
+		Vector actions = new Vector(Arrays.asList(b));
+		actions.add(agentId, a);;
 		for (int i = 0; i < strat.length; i++) {
-			actions.add(i);
+			int x = (agentId==1) ? 0:1;
+			actions.remove(x);
+			actions.add(x,i);		
 			util = util + strat[i]*reward.getReward(actions, agentId);
-			actions.removeElementAt(1);
 		}
 		return util;
 	}

@@ -257,11 +257,12 @@ public class ExperimentLogger {
 		content.append("Total utility: ");
 		DescriptiveStatistics stats0=new DescriptiveStatistics(allUtil[0]);
 		DescriptiveStatistics stats1=new DescriptiveStatistics(allUtil[1]);
-		content.append(Double.toString(stats0.getMean())+"+-"+Double.toString(stats0.getStandardDeviation()));
-		content.append("\t"+Double.toString(stats1.getMean())+"+-"+Double.toString(stats1.getStandardDeviation()));
-		
+		String mean1 = Double.toString(stats0.getMean())+"+-"+Double.toString(stats0.getStandardDeviation());
+		String mean2= Double.toString(stats1.getMean())+"+-"+Double.toString(stats1.getStandardDeviation());
+		content.append(mean1);
+		content.append("\t"+mean2);
 		content.append(ret);
+		recordConfig(mean1+"\t"+mean2);
 	}
-
 
 }
